@@ -1,0 +1,19 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Encyclopedia
+{% endblock %}
+
+{% block body %}
+<h1 class="title" name="title">{{md_title}}</h1>
+
+<ul>
+    <li class="content" name="content">{{md_page | safe}}</li>
+</ul>
+<a href="{% url 'edit' md_id %}">Edit this page</a>
+<br>
+<a href="{% url 'delete' md_id %}">Delete this page</a>
+<br>
+<a href="{% url 'index' %}">Back to full listing</a>
+
+{% endblock %}

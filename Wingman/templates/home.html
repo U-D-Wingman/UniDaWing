@@ -1,0 +1,58 @@
+{% load static %}
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html lang="en">
+<head>
+    <title>University DailyLife Wingman</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="../../static/auctions/styles.css" rel="stylesheet">
+
+    {% block script %}
+    {% endblock %}
+
+</head>
+<body>
+    <h1>University DailyLife Wingman</h1>
+    <div>
+        {% if user.is_authenticated %}
+        Signed in as <strong>{{ user.username }}</strong>.
+        {% else %}
+        Not signed in.
+        {% endif %}
+    </div>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'index' %}">Home</a>
+        </li>
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}" id="link_out">Log Out</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Log In</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">Register</a>
+        </li>
+        {% endif %}
+    </ul>
+    <hr>
+    <div><a class="nav-link" href="{% url 'auctionindex' %}">Trade</a></div>
+    <hr>
+    <div><a class="nav-link" href="{% url 'sportsindex' %}">Gym</a></div>
+    <hr>
+    <div><a class="nav-link" href="{% url 'deliveries' %}">Delivery</a></div>
+    <hr>
+    <h3>Billboard</h3>
+    <ul>
+    {% for entry in entries %}
+    <li><a>{{ entry }}</a></li>
+    {% endfor %}
+</ul>
+
+    {% block body %}
+    {% endblock %}
+</body>
+</html>

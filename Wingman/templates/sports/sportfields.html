@@ -1,0 +1,33 @@
+{% extends "sports/layout.html" %}
+
+{% block body %}
+    <h2>The sportfields</h2>
+
+    {% for sportfield in sportfields %}
+    <div style="clear: left; float:none; margin-bottom:150px;">
+            <p>
+                <span style="font-weight: bold">
+                    <a>{{sportfield.name}}</a>
+                </span>
+                <br>
+                <span style="font-weight: bold">Price:</span>RMB
+                {{sportfield.price}}
+            </p>
+                <br>
+                {{sportfield.type}}
+
+            {% if sportfield.active %}
+            {% else %}
+            <p style="color:red">Sold to: {{sportfield.cur_user}} </p>
+            {%endif%}
+
+        </div>
+    </div>
+
+
+
+    {% empty %}
+        <p>There is no sportfields.</p>
+    {% endfor %}
+
+{% endblock %}
