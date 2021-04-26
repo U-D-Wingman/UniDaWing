@@ -1,0 +1,10 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# CodeStream ignored files
+/../../UniDaWing\.idea/codestream.xml
+# Datasource local storage ignored files
+/../../../../../../:\Users\Geniu\Desktop\UniDaWing\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/
