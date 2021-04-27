@@ -1,0 +1,43 @@
+{% extends "./layout.html" %}
+
+{% block body %}
+    <h2>{{title}}</h2>
+
+    {% for request in requests %}
+        {% if request.success == True %}
+             <div style="clear: left; float:none; margin-bottom:150px;">
+<!--        {% if auction.article_image != "" %}-->
+<!--        <img style="float:left; margin-right:60px" src="{{auction.article_image}}" width="200" height="200">-->
+<!--        {% else %}-->
+<!--        <img style="float:left; margin-right:60px" src="media/{{auction.image}}" width="200" height="200">-->
+<!--        {% endif%}-->
+            <div>
+                <p>
+                    <span style="font-weight: bold">
+                        <a href="{% url 'listed_request' request.pk %}">{{request.title}}</a>
+                    </span>
+<!--                <br>-->
+<!--                <span style="font-weight: bold">Price:</span>RMB-->
+<!--                {% if auction.last_bid %}-->
+<!--                {{auction.last_bid.price}}-->
+<!--                {%else%}-->
+<!--                {{auction.initial_price}}-->
+<!--                {% endif %}-->
+<!--                <br>-->
+<!--                {{auction.description}}-->
+                </p>
+
+<!--            {% if auction.final_buyer%}-->
+<!--            <p style="color:red">Sold to: {{auction.final_buyer.username}} </p>-->
+<!--            {%endif%}-->
+
+                </div>
+            </div>
+        {% endif %}
+
+
+    {% empty %}
+        <p>There is no active listing</p>
+    {% endfor %}
+
+{% endblock %}

@@ -13,7 +13,8 @@ from django.db import models
 from django.core.files.base import ContentFile
 
 from . import util
-from .models import User, Category, Auction, Bid, WatchList, Comment, AucPic, SportField
+from .models import *
+# from .models import User, Category, Auction, Bid, WatchList, Comment, AucPic, SportField
 
 
 # from .forms import CreateForm
@@ -22,16 +23,16 @@ from .models import User, Category, Auction, Bid, WatchList, Comment, AucPic, Sp
 def index(request):
     title = '首页'
 
-    auctions = {}
-    auctions = Auction.objects.filter(active=True).all()
-
     dict_vars = {"title": title, "entries": util.list_entries()}
 
     return render(request, "home.html", dict_vars)
 
 
 def auctionindex(request):
-    return render(request, "auctions/index.html")
+    auctions = {}
+    auctions = Auction.objects.filter(active=True).all()
+    dict_vars={"auctions":auctions}
+    return render(request, "auctions/index.html",dict_vars)
 
 
 def sportsindex(request):
@@ -41,6 +42,11 @@ def sportsindex(request):
 def delivery(request):
     return render(request, "deliveries/deliveries.html")
 
+def requestindex(request):
+    requests={}
+    requests= Request.objects.filter(active=True).all()
+    dict_vars={"requests":requests}
+    return render(request, "request/index.html",dict_vars)
 
 def login_view(request):
     if request.method == "POST":
@@ -236,3 +242,153 @@ def sportfields(request):
     except:
         return render(request, "auctions/error.html", dict_vars)
 
+
+###################################################################################
+"""
+    Request System
+"""
+
+@login_required
+def create_request(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        description = request.POST["description"]
+        date_time =request.POST["date_time"]
+        category_id = request.POST["category"]
+        num_joins=1
+        # url = request.POST["article_img"]
+        # initial_price = request.POST["initial_price"]
+        current_user = "su"
+        # pic = request.FILES.get('article_img_local')
+        req = Request(title=title, description=description,
+                      num_joins=num_joins, bringup_time=date_time,active=True,
+                      category=Request_Category.objects.get(pk=category_id))
+        #    pic_name=str(auction.pk)+".jpg"
+        #    aucpic=AucPic(name=pic_name,image=pic)
+        req.save()
+        #    aucpic.save()
+
+        w = Request_WatchList(request=req, user=request.user)
+        w.save()
+        return HttpResponseRedirect(reverse('listed_request', args=[req.id], ))
+
+    dict_vars = {"categories": Request_Category.objects.all()}
+
+    return render(request, "request/create_listing.html", dict_vars)
+
+
+def listed_request(request, request_id):
+    req = Request.objects.get(pk=request_id)
+    # last_bid = Bid.objects.filter(req=article).order_by("created").last()
+    # bids_count = Bid.objects.filter(req=article).count()
+    reqs_ids_in_watch_list = {}
+    if request.user.is_authenticated:
+        reqs_ids_in_watch_list = Request_WatchList.objects.filter(user=request.user).values_list('request', flat=True)
+
+    if request.method == "POST":
+        # bid = Bid(user=request.user, req=article, price=request.POST["new_bid"])
+        # bid.save()
+        req.num_joins=req.num_joins+1
+        req.save()
+        return HttpResponseRedirect(reverse("listed_request", args=[request_id]))
+
+    dict_vars = {"request": req}
+    dict_vars.update({"comments": Request_Comment.objects.filter(request=req).order_by("-created").all(),
+                      "reqs_ids_in_watch_list":reqs_ids_in_watch_list})
+    return render(request, "request/listed_article.html", dict_vars)
+
+
+@login_required
+def watch_request(request):
+    if request.method == "POST":
+        request_id = request.POST["request_id"]
+        req = Request.objects.get(pk=request_id)
+        if Request_WatchList.objects.filter(request=req, user=request.user).all().first() is None:
+            w = Request_WatchList(request=req, user=request.user)
+            w.save()
+        else:
+            w = Request_WatchList.objects.get(request=req, user=request.user)
+            w.delete()
+        return HttpResponseRedirect(reverse("listed_request", args=[request_id]))
+
+    title = 'My Request Watchlist'
+    ids = Request_WatchList.objects.filter(user=request.user).values_list('request', flat=True)
+    reqs = Request.objects.filter(id__in=ids)
+    dict_vars = {"title": title, "requests": reqs}
+
+    return render(request, "request/index.html", dict_vars)
+
+
+# def close_request(request):
+#     if request.method == "POST":
+#         article_id = request.POST["article_id"]
+#         auction = Auction.objects.get(pk=article_id)
+#         last_bid = Bid.objects.filter(auction=auction).order_by("created").last()
+#         if last_bid is not None:
+#             auction.final_buyer = last_bid.user
+#             auction.active = False
+#             auction.save()
+#         else:
+#             auction.active = False
+#             auction.save()
+#         return HttpResponseRedirect(reverse("listed_article", args=[article_id]))
+
+
+@login_required
+def successful_request(request):
+    title = "My successful request"
+
+    if request.user.is_authenticated:
+        reqs = Request_Joined_List.objects.filter(user=request.user.pk).all()
+        # reqs = Request.objects.filter(reqs.request.success==True)
+    dict_vars = {"title": title, "requests": reqs}
+
+    return render(request, "request/successful.html", dict_vars)
+
+
+@login_required
+def joined_request(request):
+    if request.method == "POST":
+        request_id = request.POST["request_id"]
+        req = Request.objects.get(pk=request_id)
+        if Request_Joined_List.objects.filter(request=req, user=request.user).all().first() is None:
+            j = Request_Joined_List(request=req, user=request.user)
+            j.save()
+            req.num_joins=req.num_joins+1
+            req.save()
+        else:
+            j = Request_Joined_List.objects.get(request=req, user=request.user)
+            j.delete()
+            req.num_joins=req.num_joins-1
+            req.save()
+        return HttpResponseRedirect(reverse("listed_request", args=[request_id]))
+
+    title = 'My Joined Request'
+    ids = Request_Joined_List.objects.filter(user=request.user).values_list('request', flat=True)
+    reqs = Request.objects.filter(id__in=ids)
+    dict_vars = {"title": title, "auctions": reqs, "remove_article": True}
+
+    return render(request, "request/index.html", dict_vars)
+
+
+def request_comment(request, article_id):
+    if request.method == "POST":
+        article = Auction.objects.get(pk=article_id)
+        comment = Comment(user=request.user, auction=article, text=request.POST["comment_text"])
+        if len(comment.text) == 0: return HttpResponseRedirect(reverse("listed_article", args=[article_id]))
+        comment.save()
+        return HttpResponseRedirect(reverse("listed_request", args=[article_id]))
+
+
+def request_categories(request):
+    categories = Request_Category.objects.all()
+    dict_vars = {"categories": categories}
+    return render(request, "request/categories.html", dict_vars)
+
+
+def listed_request_by_category(request, category_id):
+    category = Request_Category.objects.get(id=category_id)
+    dict_vars = {"title": category.name,
+                 "requests": category.requests.filter(active=True)}
+
+    return render(request, "request/index.html", dict_vars)

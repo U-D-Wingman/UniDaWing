@@ -1,0 +1,83 @@
+{% extends "./layout.html" %}
+{% load static %}
+{% block script %}
+<script src="{% static '../auctions/validatebid.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+    <h2 style="display: inline-block">Listing: {{request.title}} </h2>
+
+    <p>
+        <h4>{{request.description}}</h4>
+        <br>
+<!--        <img style="display: block; margin-left: auto; margin-right: auto; width: 40%;" src="{{article.article_image}}">-->
+<!--        {% if article.article_image == "" %}-->
+<!--        <img style="display: block; margin-left: auto; margin-right: auto; width: 40%;" src="media/{{article.image}}">-->
+<!--        {% endif %}-->
+    </p>
+    <ul >
+<!--        <li>-->
+<!--            Listed by:-->
+<!--            {% if article.owner.pk != request.user.pk %}-->
+<!--                 {{article.owner.username}}-->
+<!--            {% else%}-->
+<!--               me-->
+<!--            {% endif %}-->
+<!--        </li>-->
+        <li> Category: {{request.category.name}}</li>
+    </ul>
+
+    <h3>
+        {{request.date_time}}
+    </h3>
+    <h4>
+        Number of Joined: {{request.num_joins}}
+    </h4>
+
+    {% if user.is_authenticated %}
+        {% if request.active %}
+
+
+            {% if request.pk in requests_ids_in_watch_list %}
+                <form action="{% url 'watch_request' %}" method="post">
+                    {% csrf_token %}
+                    <input class="form-control" type="hidden" name="request_id" value="{{request.pk}}">
+                    <input class="btn btn-secondary btn-sm" type="submit" value="Add to WatchList">
+                </form>
+            {%else%}
+                <form action="{% url 'watch_request' %}" method="post">
+                    {% csrf_token %}
+                    <input class="form-control" type="hidden" name="request_id" value="{{request.pk}}">
+                    <input class="btn btn-secondary btn-sm" type="submit" value="Remove from WatchList">
+                </form>
+            {%endif%}
+        {%endif%}
+
+    {% endif %}
+
+    <br>
+
+    <ul class="list-group">
+        {% for comment in comments %}
+            <div class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">User: {{comment.user.username}}</h5>
+                    <small class="text-muted">{{comment.created}}</small>
+                </div>
+                <p class="mb-1">{{comment.text}}</p>
+            </div>
+        {% endfor %}
+    </ul>
+
+    <br>
+
+    {% if user.is_authenticated and article.active %}
+        <form action="{% url 'make_comment' request.id %}" method="post">
+            {% csrf_token %}
+            <textarea class="form-control" id="comment-body" placeholder="Write comment here..", name="comment_text"></textarea>
+            <input class="btn btn-secondary btn-sm" type="submit" value="Add Comment">
+        </form>
+    {% endif %}
+
+
+{% endblock %}

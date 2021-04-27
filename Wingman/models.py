@@ -43,7 +43,6 @@ class Auction(models.Model):
         return Bid.objects.filter(auction=self).order_by("created").last()
 
 
-
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="bids")
@@ -105,3 +104,46 @@ class Delivery(models.Model):
         return f"Corp:{self.corporatiion}, " \
                f"receiver: {self.receiver}, " \
                f"active:{self.active}"
+
+# ####################################################################
+# """
+#     Request System
+# """
+
+class Request_Category(models.Model):
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.name
+
+class Request(models.Model):
+    title = models.CharField(max_length=64)
+    description = models.TextField()
+    bringup_time=models.DateTimeField(auto_now_add=True)
+    num_joins = models.IntegerField(default=0)
+    category = models.ForeignKey(Request_Category, on_delete=models.CASCADE, related_name="request")
+    active = models.BooleanField()
+    success= models.BooleanField(default=False)
+    # user =models.ForeignKey(User, on_delete=models.CASCADE,related_name="request")
+    def __str__(self):
+        return f"title:{self.title},"\
+               f"active:{self.active}"
+
+class Request_Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="request_comments")
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="request_comments")
+    text = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"user:{self.user.username}, " \
+               f"auction: {self.request.title}, " \
+               f"comment: {self.text} "
+
+class Request_WatchList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="request_watch_lists")
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="request_watch_lists")
+
+class Request_Joined_List(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="request_joined_lists")
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="request_joined_lists")

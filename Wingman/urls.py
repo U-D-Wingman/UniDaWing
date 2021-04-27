@@ -26,6 +26,16 @@ urlpatterns = [
     path("sportfields",views.sportfields,name="sportfields"),
     path("auctionindex",views.auctionindex,name="auctionindex"),
     path("sportsindex",views.sportsindex,name="sportsindex"),
-    path("deliveries",views.delivery,name="deliveries")
+    path("deliveries",views.delivery,name="deliveries"),
+
+    path("requsetindex",views.requestindex,name="requestindex"),
+    path("create_request",views.create_request,name="create_request"),
+    path("listed_request/<int:request_id>",views.listed_request,name="listed_request"),
+    path("watch_request",views.watch_request,name="watch_request"),
+    path("successful_request",views.successful_request,name="successful_request"),
+    path("joined_request",views.joined_request,name="joined_request"),
+    path("request_comment",views.request_comment,name="request_comment"),
+    path("request_categories",views.request_categories,name="request_categories"),
+    path("listed_request_by_category/<int:category_id>",views.listed_request_by_category,name="listed_request_by_category")
 ]
 

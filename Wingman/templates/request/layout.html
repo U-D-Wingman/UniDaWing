@@ -13,7 +13,7 @@
 
 </head>
 <body>
-    <h1>University DailyLife Wingman - Trade System</h1>
+    <h1>University DailyLife Wingman - Request System</h1>
     <div>
         {% if user.is_authenticated %}
         Signed in as <strong>{{ user.username }}</strong>.
@@ -26,23 +26,23 @@
             <a class="nav-link" href="{% url 'index' %}">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'auctionindex' %}">Active Listing</a>
+            <a class="nav-link" href="{% url 'requestindex' %}">Request Listing</a>
         </li>
         {% if user.is_authenticated %}
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'create_listing' %}" id="link_create">Create Listing</a>
+            <a class="nav-link" href="{% url 'create_request' %}" id="link_create">Create Listing</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'my_listing' %}" id="link_mine">My Listing</a>
+            <a class="nav-link" href="{% url 'joined_request' %}" id="link_mine">Joined Request</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'watch_list' %}" id="link_watch">Watchlist</a>
+            <a class="nav-link" href="{% url 'watch_request' %}" id="link_watch">Watching Request</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'winning_listing' %}" id="link_winning">Winninglist</a>
+            <a class="nav-link" href="{% url 'successful_request' %}" id="link_winning">Successful Request</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'categories' %}" id="link_categories">Categories</a>
+            <a class="nav-link" href="{% url 'request_categories' %}" id="link_categories">Categories</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}" id="link_out">Log Out</a>

@@ -1,0 +1,15 @@
+{% extends "./layout.html" %}
+{% load static %}
+
+{% block body %}
+<h2>Categories</h2>
+
+<ul class="list-group">
+    {% for category in categories %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+           <a class="alert-link" href="{% url 'listed_request_by_category' category.pk %}"> {{category.name}}</a>
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
