@@ -1,8 +1,6 @@
 {% extends "./layout.html" %}
 {% load static %}
-{% block script %}
-<script src="{% static '../auctions/validatebid.js' %}"></script>
-{% endblock %}
+
 
 {% block body %}
     <h2 style="display: inline-block">Listing: {{request.title}} </h2>
@@ -37,8 +35,7 @@
     {% if user.is_authenticated %}
         {% if request.active %}
 
-
-            {% if request.pk in requests_ids_in_watch_list %}
+            {% if request.id not in requests_ids_in_watch_list%}
                 <form action="{% url 'watch_request' %}" method="post">
                     {% csrf_token %}
                     <input class="form-control" type="hidden" name="request_id" value="{{request.pk}}">
@@ -49,6 +46,21 @@
                     {% csrf_token %}
                     <input class="form-control" type="hidden" name="request_id" value="{{request.pk}}">
                     <input class="btn btn-secondary btn-sm" type="submit" value="Remove from WatchList">
+                </form>
+            {%endif%}
+
+<!--            <p>123: {{requests_ids_in_joined_list}}</p>-->
+            {% if request.id not in requests_ids_in_joined_list%}
+                <form action="{% url 'joined_request' %}" method="post">
+                    {% csrf_token %}
+                    <input class="form-control" type="hidden" name="request_id" value="{{request.pk}}">
+                    <input class="btn btn-secondary btn-sm" type="submit" value="Add to JoinedList">
+                </form>
+            {%else%}
+                <form action="{% url 'joined_request' %}" method="post">
+                    {% csrf_token %}
+                    <input class="form-control" type="hidden" name="request_id" value="{{request.pk}}">
+                    <input class="btn btn-secondary btn-sm" type="submit" value="Remove from JoinedList">
                 </form>
             {%endif%}
         {%endif%}

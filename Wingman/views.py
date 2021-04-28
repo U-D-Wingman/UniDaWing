@@ -276,27 +276,47 @@ def create_request(request):
 
     return render(request, "request/create_listing.html", dict_vars)
 
+# def listed_request(request, request_id):
+#     req = Request.objects.get(pk=request_id)
+#
+#     requests_ids_in_watch_list = {}
+#     if request.user.is_authenticated:
+#         requests_ids_in_watch_list = WatchList.objects.filter(user=request.user).values_list('auction', flat=True)
+#
+#     if request.method == "POST":
+#         bid = Bid(user=request.user, auction=article, price=request.POST["new_bid"])
+#         bid.save()
+#         return HttpResponseRedirect(reverse("listed_article", args=[article_id]))
+#
+#     dict_vars = {"article": article, "last_bid": last_bid, "bids_count": bids_count}
+#     dict_vars.update({"comments": Comment.objects.filter(auction=article).order_by("-created").all(),
+#                       "auctions_ids_in_watch_list": auctions_ids_in_watch_list})
+#     return render(request, "auctions/listed_article.html", dict_vars)
+
+
 
 def listed_request(request, request_id):
     req = Request.objects.get(pk=request_id)
     # last_bid = Bid.objects.filter(req=article).order_by("created").last()
     # bids_count = Bid.objects.filter(req=article).count()
-    reqs_ids_in_watch_list = {}
+    requests_ids_in_watch_list = {}
+    requests_ids_in_joined_list = {}
     if request.user.is_authenticated:
-        reqs_ids_in_watch_list = Request_WatchList.objects.filter(user=request.user).values_list('request', flat=True)
-
+        requests_ids_in_watch_list = Request_WatchList.objects.filter(user=request.user).values_list('request', flat=True)
+        requests_ids_in_joined_list = Request_Joined_List.objects.filter(user=request.user).values_list('request', flat=True)
     if request.method == "POST":
         # bid = Bid(user=request.user, req=article, price=request.POST["new_bid"])
         # bid.save()
-        req.num_joins=req.num_joins+1
-        req.save()
+        # req.num_joins=req.num_joins+1
+        # req.save()
         return HttpResponseRedirect(reverse("listed_request", args=[request_id]))
 
     dict_vars = {"request": req}
-    dict_vars.update({"comments": Request_Comment.objects.filter(request=req).order_by("-created").all(),
-                      "reqs_ids_in_watch_list":reqs_ids_in_watch_list})
+    dict_vars.update({"requests_ids_in_watch_list":requests_ids_in_watch_list,
+                      "requests_ids_in_joined_list":requests_ids_in_joined_list,
+                      "comments": Request_Comment.objects.filter(request=req).order_by("-created").all()
+                      })
     return render(request, "request/listed_article.html", dict_vars)
-
 
 @login_required
 def watch_request(request):
@@ -314,32 +334,16 @@ def watch_request(request):
     title = 'My Request Watchlist'
     ids = Request_WatchList.objects.filter(user=request.user).values_list('request', flat=True)
     reqs = Request.objects.filter(id__in=ids)
-    dict_vars = {"title": title, "requests": reqs}
+    dict_vars = {"title": title, "requests": reqs, "remove_article": True}
 
     return render(request, "request/index.html", dict_vars)
-
-
-# def close_request(request):
-#     if request.method == "POST":
-#         article_id = request.POST["article_id"]
-#         auction = Auction.objects.get(pk=article_id)
-#         last_bid = Bid.objects.filter(auction=auction).order_by("created").last()
-#         if last_bid is not None:
-#             auction.final_buyer = last_bid.user
-#             auction.active = False
-#             auction.save()
-#         else:
-#             auction.active = False
-#             auction.save()
-#         return HttpResponseRedirect(reverse("listed_article", args=[article_id]))
-
 
 @login_required
 def successful_request(request):
     title = "My successful request"
 
     if request.user.is_authenticated:
-        reqs = Request_Joined_List.objects.filter(user=request.user.pk).all()
+        reqs = Request_Joined_List.objects.filter(user=request.user).all()
         # reqs = Request.objects.filter(reqs.request.success==True)
     dict_vars = {"title": title, "requests": reqs}
 
@@ -366,7 +370,7 @@ def joined_request(request):
     title = 'My Joined Request'
     ids = Request_Joined_List.objects.filter(user=request.user).values_list('request', flat=True)
     reqs = Request.objects.filter(id__in=ids)
-    dict_vars = {"title": title, "auctions": reqs, "remove_article": True}
+    dict_vars = {"title": title, "requests": reqs, "remove_article": True}
 
     return render(request, "request/index.html", dict_vars)
 

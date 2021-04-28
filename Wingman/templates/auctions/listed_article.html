@@ -79,6 +79,7 @@
         <br>
 
         {% if article.owner != request.user and article.active %}
+            <p>123: {{auctions_ids_in_watch_list}}</p>
             {% if article.id not in auctions_ids_in_watch_list %}
                 <form action="{% url 'watch_list' %}" method="post">
                     {% csrf_token %}
