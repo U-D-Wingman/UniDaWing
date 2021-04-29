@@ -1,0 +1,34 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Edit Listing</h2>
+
+     <form action="{% url 'save_edit' auction.id%}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control" autofocus type="text" name="title" placeholder="Title" value={{auction.title}} readonly="readonly" style="width:50%">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" maxlength="255" name="description" placeholder="Description" value="{{auction.description}}" style="width:50%">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="number" name="initial_price" MIN="0" placeholder="Initial Price" value={{auction.initial_price}} style="width:50%">
+        </div>
+        <div class="form-group">
+            <select class="form-control" name="category" style="width:50%">
+                {% for c in categories %}
+                    <option value="{{c.id}}">{{c.name}}</option>
+                {%endfor%}
+            </select>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="url" name="article_img" placeholder="Article Image Url" value="{{auction.article_img}}" style="width:50%">
+        </div>
+        <div class="form-group">
+            <input class="local-pic" type="file" name="article_img_local" placeholder="Article Image Url from localhost" >
+        </div>
+<!--         <input class="btn btn-primary" type="submit" name="article_id" value={{auction.id}}>-->
+        <input class="btn btn-primary" type="submit" value="Save">
+    </form>
+
+{% endblock %}

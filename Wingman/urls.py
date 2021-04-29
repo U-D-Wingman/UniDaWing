@@ -19,6 +19,8 @@ urlpatterns = [
     path("listed_article/<int:article_id>", views.listed_article, name="listed_article"),
     path("watch_list", views.watch_list, name="watch_list"),
     path("close_auction", views.close_auction, name="close_auction"),
+    path("edit_auction/<int:article_id>", views.edit_auction, name="edit_auction"),
+    path("save_edit/<int:article_id>", views.save_edit, name="save_edit"),
     path("winning_listing", views.winning_listing, name="winning_listing"),
     path("comment_on/<int:article_id>", views.make_comment, name="make_comment"),
     path("categories", views.categories, name="categories"),
@@ -34,7 +36,7 @@ urlpatterns = [
     path("watch_request",views.watch_request,name="watch_request"),
     path("successful_request",views.successful_request,name="successful_request"),
     path("joined_request",views.joined_request,name="joined_request"),
-    path("request_comment",views.request_comment,name="request_comment"),
+    path("request_comment/<int:request_id>",views.request_comment,name="request_comment"),
     path("request_categories",views.request_categories,name="request_categories"),
     path("listed_request_by_category/<int:category_id>",views.listed_request_by_category,name="listed_request_by_category")
 ]

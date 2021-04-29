@@ -61,9 +61,30 @@
             {% else %}
                 <form action="{% url 'close_auction' %}" method="post">
                     {% csrf_token %}
-                    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-                    <input class="btn btn-primary" type="submit" value="Close Bid">
+                    <div class="form-group">
+                        <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
+                        <input class="btn btn-primary" type="submit" value="Close Bid">
+                    </div>
+
                 </form>
+                {% if not last_bid %}
+                    <form action="{% url 'edit_auction' article.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
+                            <input class="btn btn-primary" type="submit" value="Edit Auction">
+                        </div>
+
+                    </form>
+                {% else %}
+                    <form action="{% url 'edit_auction' article.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
+                            <input class="btn btn-primary" type="submit" value="Edit Auction" disabled="disabled">
+                        </div>
+                    </form>
+                {% endif %}
             {% endif %}
         {% else%}
                 <p style="color:red">

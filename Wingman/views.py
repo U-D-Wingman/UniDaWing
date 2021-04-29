@@ -61,11 +61,11 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
-            return render(request, "auctions/login.html", {
+            return render(request, "login.html", {
                 "message": "Invalid username and/or password."
             })
     else:
-        return render(request, "auctions/login.html")
+        return render(request, "login.html")
 
 
 def logout_view(request):
@@ -82,7 +82,7 @@ def register(request):
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
-            return render(request, "auctions/register.html", {
+            return render(request, "register.html", {
                 "message": "Passwords must match."
             })
 
@@ -97,7 +97,7 @@ def register(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "auctions/register.html")
+        return render(request, "register.html")
 
 
 @login_required
@@ -178,6 +178,49 @@ def close_auction(request):
             auction.save()
         return HttpResponseRedirect(reverse("listed_article", args=[article_id]))
 
+def edit_auction(request,article_id):
+    if request.method == "POST":
+        # article_id = request.POST["article_id"]
+        auction = Auction.objects.get(pk=article_id)
+        # title = request.POST["title"]
+        # description = request.POST["description"]
+        # category_id = request.POST["category"]
+        # url = request.POST["article_img"]
+        # initial_price = request.POST["initial_price"]
+
+        dict_vars = {"auction": auction,"categories":Category.objects.all(),"test":str(auction.category)}
+
+        # dict_vars.update({"comments": Comment.objects.filter(auction=article).order_by("-created").all(),
+        #                   "auctions_ids_in_watch_list": auctions_ids_in_watch_list})
+        return render(request,"auctions/edit_listing.html", dict_vars)
+
+    dict_vars = {"categories": Category.objects.all()}
+
+    return render(request, "auctions/edit_listing.html", dict_vars)
+
+def save_edit(request,article_id):
+    if request.method == "POST":
+        auction=Auction.objects.get(pk=article_id)
+        if request.POST["title"]:
+            auction.title = request.POST["title"]
+        if request.POST["description"]:
+            auction.description = request.POST["description"]
+        if request.POST["category"]:
+            auction.category_id = request.POST["category"]
+        if request.POST["initial_price"]:
+            auction.initial_price = request.POST["initial_price"]
+        if request.POST["article_img"]:
+            auction.url = request.POST["article_img"]
+        if request.FILES.get("article_img_local"):
+            auction.image = request.FILES.get("article_img_local")
+
+        auction.save()
+
+        return HttpResponseRedirect(reverse('listed_article', args=[auction.id]))
+
+    dict_vars = {"categories": Category.objects.all()}
+
+    return render(request, "auctions/edit_listing.html", dict_vars)
 
 @login_required
 def winning_listing(request):
@@ -375,13 +418,13 @@ def joined_request(request):
     return render(request, "request/index.html", dict_vars)
 
 
-def request_comment(request, article_id):
+def request_comment(request, request_id):
     if request.method == "POST":
-        article = Auction.objects.get(pk=article_id)
-        comment = Comment(user=request.user, auction=article, text=request.POST["comment_text"])
-        if len(comment.text) == 0: return HttpResponseRedirect(reverse("listed_article", args=[article_id]))
+        req = Request.objects.get(pk=request_id)
+        comment = Request_Comment(user=request.user, request=req, text=request.POST["comment_text"])
+        if len(comment.text) == 0: return HttpResponseRedirect(reverse("listed_request", args=[request_id]))
         comment.save()
-        return HttpResponseRedirect(reverse("listed_request", args=[article_id]))
+        return HttpResponseRedirect(reverse("listed_request", args=[request_id]))
 
 
 def request_categories(request):

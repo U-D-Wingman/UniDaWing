@@ -1,7 +1,6 @@
 {% extends "./layout.html" %}
 {% load static %}
 
-
 {% block body %}
     <h2 style="display: inline-block">Listing: {{request.title}} </h2>
 
@@ -83,9 +82,10 @@
 
     <br>
 
-    {% if user.is_authenticated and article.active %}
-        <form action="{% url 'make_comment' request.id %}" method="post">
+    {% if user.is_authenticated and request.active %}
+        <form action="{% url 'request_comment' request.pk %}" method="post">
             {% csrf_token %}
+<!--            <input class="form-control" type="hidden" name="request_id" value="{{request.pk}}">-->
             <textarea class="form-control" id="comment-body" placeholder="Write comment here..", name="comment_text"></textarea>
             <input class="btn btn-secondary btn-sm" type="submit" value="Add Comment">
         </form>
