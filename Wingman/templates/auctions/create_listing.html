@@ -1,31 +1,31 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Create Listing</h2>
+<h2>Create Listing</h2>
 
-     <form action="{% url 'create_listing' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            <input class="form-control" autofocus type="text" name="title" placeholder="Title">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="text" maxlength="255" name="description" placeholder="Description">
-        </div>
-        <div class="form-group">
-            RMB <input class="form-control" type="number" min="0" name="initial_price" placeholder="Initial Price" value="0">
-        </div>
-        <div class="form-group">
-            <select class="form-control" name="category" >
-                {% for c in categories %}
-                    <option value="{{c.id}}">{{c.name}}</option>
-                {%endfor%}
-            </select>
-        </div>
-         <div class="form-group">
-            <input class="form-control" type="url" name="article_img" placeholder="Article Image Url">
-        </div>
-         <input class="local-pic" type="file" name="article_img_local" placeholder="Article Image Url from localhost" >
-        <input class="btn btn-primary" type="submit" value="Create">
-    </form>
+<form action="{% url 'create_listing' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <input class="form-control" autofocus type="text" name="title" placeholder="Title">
+    </div>
+    <div class="form-group">
+        <input class="form-control" type="text" maxlength="255" name="description" placeholder="Description">
+    </div>
+    <div class="form-group">
+        RMB <input class="form-control" type="number" min="0" name="initial_price" placeholder="Initial Price" value="0">
+    </div>
+    <div class="form-group">
+        <select class="form-control" name="category">
+            {% for c in categories %}
+            <option value="{{c.id}}">{{c.name}}</option>
+            {%endfor%}
+        </select>
+    </div>
+    <div class="form-group">
+        <input class="form-control" type="url" name="article_img" placeholder="Article Image Url">
+    </div>
+    <input class="local-pic" type="file" name="article_img_local" placeholder="Article Image Url from localhost">
+    <input class="btn btn-primary" type="submit" value="Create">
+</form>
 
 {% endblock %}

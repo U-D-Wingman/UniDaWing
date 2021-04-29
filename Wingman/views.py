@@ -21,11 +21,14 @@ from .models import *
 
 
 def index(request):
-    title = '首页'
+        title = '首页'
+        page_content=[]
+        entries=util.list_entries()
 
-    dict_vars = {"title": title, "entries": util.list_entries()}
+        dict_vars = {"title": title, "entries":entries,"page_content":page_content }
 
-    return render(request, "home.html", dict_vars)
+        return render(request, "home.html", dict_vars)
+
 
 
 def auctionindex(request):
@@ -36,11 +39,20 @@ def auctionindex(request):
 
 
 def sportsindex(request):
-    return render(request, "sports/sportsindex.html")
+        title = 'Active listings'
+    
+        sportfields = SportField.objects.all()
+    
+        dict_vars = {"title": title, "sportfields": sportfields}
+
+        return render(request, "sports/sportsindex.html", dict_vars)
 
 
 def delivery(request):
-    return render(request, "deliveries/deliveries.html")
+    deli = Delivery.objects.all()
+    dict_vars={"deliveries":deli}
+    return render(request,"deliveries/deliveries.html",dict_vars)
+
 
 def requestindex(request):
     requests={}
@@ -108,16 +120,16 @@ def create_listing(request):
         category_id = request.POST["category"]
         url = request.POST["article_img"]
         initial_price = request.POST["initial_price"]
-        current_user = "su"
+        current_user="su"
         pic = request.FILES.get('article_img_local')
         auction = Auction(title=title, description=description, initial_price=initial_price,
                           owner=request.user, category=Category.objects.get(pk=category_id), active=True,
-                          article_image=url, image=pic)
-        #    pic_name=str(auction.pk)+".jpg"
-        #    aucpic=AucPic(name=pic_name,image=pic)
+                          article_image=url,image=pic,current_highest_price=initial_price)
+    #    pic_name=str(auction.pk)+".jpg"
+    #    aucpic=AucPic(name=pic_name,image=pic)
         auction.save()
-        #    aucpic.save()
-        return HttpResponseRedirect(reverse('listed_article', args=[auction.id], ))
+    #    aucpic.save()
+        return HttpResponseRedirect(reverse('listed_article', args=[auction.id],))
 
     dict_vars = {"categories": Category.objects.all()}
 
@@ -126,7 +138,7 @@ def create_listing(request):
 
 def listed_article(request, article_id):
     article = Auction.objects.get(pk=article_id)
-    last_bid = Bid.objects.filter(auction=article).order_by("created").last()
+    last_bids = Bid.objects.filter(auction=article).order_by("created")
     bids_count = Bid.objects.filter(auction=article).count()
     auctions_ids_in_watch_list = {}
     if request.user.is_authenticated:
@@ -135,9 +147,12 @@ def listed_article(request, article_id):
     if request.method == "POST":
         bid = Bid(user=request.user, auction=article, price=request.POST["new_bid"])
         bid.save()
+        if float(request.POST["new_bid"])>article.current_highest_price:
+            article.current_highest_price=float(request.POST["new_bid"])
+            article.save()
         return HttpResponseRedirect(reverse("listed_article", args=[article_id]))
 
-    dict_vars = {"article": article, "last_bid": last_bid, "bids_count": bids_count}
+    dict_vars = {"article": article, "bids": last_bids, "bids_counts": bids_count}
     dict_vars.update({"comments": Comment.objects.filter(auction=article).order_by("-created").all(),
                       "auctions_ids_in_watch_list": auctions_ids_in_watch_list})
     return render(request, "auctions/listed_article.html", dict_vars)
@@ -164,13 +179,13 @@ def watch_list(request):
     return render(request, "auctions/index.html", dict_vars)
 
 
-def close_auction(request):
+def close_auction(request,bid_id):
     if request.method == "POST":
         article_id = request.POST["article_id"]
         auction = Auction.objects.get(pk=article_id)
-        last_bid = Bid.objects.filter(auction=auction).order_by("created").last()
-        if last_bid is not None:
-            auction.final_buyer = last_bid.user
+        choosed_bid = Bid.objects.get(pk=bid_id)
+        if choosed_bid is not None:
+            auction.final_buyer = choosed_bid.user
             auction.active = False
             auction.save()
         else:
@@ -439,3 +454,41 @@ def listed_request_by_category(request, category_id):
                  "requests": category.requests.filter(active=True)}
 
     return render(request, "request/index.html", dict_vars)
+
+def appoint(request,sportfield_id):
+   if request.method == "POST":
+       afield=SportField.objects.get(pk=sportfield_id)
+       afield.active=False
+       afield.cur_user=request.user
+       aptm = Appointment(founder=request.user, field=afield,description="Default Rent",active=True)
+       aptm.save()
+       afield.save()
+   sportfields = SportField.objects.all()
+   return render(request,"sports/sportsindex.html",{"sportfields": sportfields}
+)
+
+def deappoint(request,sportfield_id):
+   if request.method == "POST":
+       afield=SportField.objects.get(pk=sportfield_id)
+       afield.active=True
+       afield.cur_user=None
+       afield.save()
+   sportfields = SportField.objects.all()
+   return render(request,"sports/sportsindex.html",{"sportfields": sportfields}
+)
+
+def chat(request):
+    chats=Chatting.objects.all()
+    dict_vars={"chats":chats}
+    if request.method == "POST":
+        chat = Chatting(user=request.user, text=request.POST["chat_text"])
+        if len(chat.text)==0: return render(request,"sports/chattingroom.html",dict_vars)
+
+        chat.save()
+    return render(request,"sports/chattingroom.html",dict_vars)
+
+def personal(request):
+    tar_user=request.user
+    
+    dict_vars={"user":tar_user}
+    return render(request,"personal.html",dict_vars)

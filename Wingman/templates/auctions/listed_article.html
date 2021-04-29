@@ -5,141 +5,140 @@
 {% endblock %}
 
 {% block body %}
-    <h2 style="display: inline-block">Listing: {{article.title}} </h2>
+<h2 style="display: inline-block">Listing: {{article.title}} </h2>
 
-    <p>
-        {{article.description}}
-        <br>
-        <img style="display: block; margin-left: auto; margin-right: auto; width: 40%;" src="{{article.article_image}}">
-        {% if article.article_image == "" %}
-        <img style="display: block; margin-left: auto; margin-right: auto; width: 40%;" src="media/{{article.image}}">
-        {% endif %}
-    <ul >
+<p>
+    {{article.description}}
+    <br>
+    <img style="display: block; margin-left: auto; margin-right: auto; width: 40%;" src="{{article.article_image}}">
+    {% if article.article_image == "" %}
+    <img style="display: block; margin-left: auto; margin-right: auto; width: 40%;" src="media/{{article.image}}">
+    {% endif %}
+    <ul>
         <li>
             Listed by:
             {% if article.owner.pk != request.user.pk %}
-                 {{article.owner.username}}
+            {{article.owner.username}}
             {% else%}
-               me
+            me
             {% endif %}
         </li>
         <li> Category: {{article.category.name}}</li>
     </ul>
 
-    <h3>RMB
-        {% if last_bid %}
-            {{last_bid.price}}
-        {% else %}
-            {{article.initial_price}}
-        {% endif %}
+    <h3>
+        Your bid should not be lower than RMB
+        {{article.initial_price}}
     </h3>
 
-    <p>
-        {{bids_count}} bids so far.
-        {% if bids_count == 0 %}
-              
-        {% elif last_bid and last_bid.user.pk ==  request.user.pk %}
-            Your bid is the current bid.
-        {% else %}
-            Last bid made by {{last_bid.user.username}}
-        {% endif%}
-    </p>
+<p>
+    {% if bids_count == 0 %}
+    No bids so far.
+    {% else %}
+    {{bids_counts}} bids so far.
+    {% for bid in bids %}
+    <div class="bid_user">
+<p><a style="font-size:250%;font-weight:400">RMB<span style="color:coral"> {{bid.price}}</span></a> made by <strong>{{bid.user}}</strong> at {{bid.created}}</p></div>
+            {% if article.owner.pk == request.user.pk and article.active %}
+<form action="{% url 'close_auction' bid.pk %}" method="post">
+    {% csrf_token %}
+    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
+    <input class="btn btn-primary" type="submit" value="Sale it to {{bid.user}}">
+</form>
+
+{%endif%}
+
+{%endfor %}
 
     {% if user.is_authenticated %}
-        {% if article.active %}
-            {% if article.owner.pk != request.user.pk %}
-                <form name="form_bid" action="{% url 'listed_article' article.id %}" method="post" 
-                    onsubmit="return {% if last_bid %}validate_bid({{last_bid.price}}, false){%else%}validate_bid({{article.initial_price}}, true){%endif%}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <input class="form-control" type="number" name="new_bid" placeholder="Place your Bid">
-                        <!--<p id="demo"></p>-->
-                    </div>
-                    <input class="btn btn-primary" type="submit" value="Place Bid"
-                        onclick="">
-                </form>
-            {% else %}
-                <form action="{% url 'close_auction' %}" method="post">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-                        <input class="btn btn-primary" type="submit" value="Close Bid">
-                    </div>
+    {% if article.active %}
+    {% if article.owner.pk != request.user.pk %}
+<form name="form_bid" action="{% url 'listed_article' article.id %}" method="post"
+      onsubmit="return {% if last_bid %}validate_bid({{last_bid.price}}, false){%else%}validate_bid({{article.initial_price}}, true){%endif%}">
+    {% csrf_token %}
+    <div class="form-group">
+        <input class="form-control" type="number" name="new_bid" placeholder="Place your Bid">
+        <!--<p id="demo"></p>-->
+    </div>
+    <input class="btn btn-primary" type="submit" value="Place Bid"
+           onclick="">
+</form>
+    {% else %}
 
-                </form>
-                {% if not last_bid %}
-                    <form action="{% url 'edit_auction' article.id %}" method="post">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-                            <input class="btn btn-primary" type="submit" value="Edit Auction">
-                        </div>
+    {% if not last_bid %}
+<form action="{% url 'edit_auction' article.id %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
+        <input class="btn btn-primary" type="submit" value="Edit Auction">
+    </div>
 
-                    </form>
-                {% else %}
-                    <form action="{% url 'edit_auction' article.id %}" method="post">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-                            <input class="btn btn-primary" type="submit" value="Edit Auction" disabled="disabled">
-                        </div>
-                    </form>
-                {% endif %}
-            {% endif %}
-        {% else%}
-                <p style="color:red">
-                    Buyer:                {% if article.final_buyer.pk != request.user.pk %}
+</form>
+    {% else %}
+<form action="{% url 'edit_auction' article.id %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
+        <input class="btn btn-primary" type="submit" value="Edit Auction" disabled="disabled">
+    </div>
+</form>
+    {% endif %}
+    {% endif %}
+    {% else%}
+<p style="color:red">
+    Buyer:                {% if article.final_buyer.pk != request.user.pk %}
 
-                    {{article.final_buyer.username}}
-                    {% else%}
-                    You won. Congratulations!
-                    {% endif %}
-                </p>
+    {{article.final_buyer.username}}
+    {% else%}
+    You won. Congratulations!
+    {% endif %}
+</p>
         {% endif %}
-        
-        <br>
+
+<br>
 
         {% if article.owner != request.user and article.active %}
-            <p>123: {{auctions_ids_in_watch_list}}</p>
+<p>123: {{auctions_ids_in_watch_list}}</p>
             {% if article.id not in auctions_ids_in_watch_list %}
-                <form action="{% url 'watch_list' %}" method="post">
-                    {% csrf_token %}
-                    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-                    <input class="btn btn-secondary btn-sm" type="submit" value="Add to WatchList">
-                </form>
+<form action="{% url 'watch_list' %}" method="post">
+    {% csrf_token %}
+    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
+    <input class="btn btn-secondary btn-sm" type="submit" value="Add to WatchList">
+</form>
             {%else%}
-                <form action="{% url 'watch_list' %}" method="post">
-                {% csrf_token %}
-                <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-                <input class="btn btn-secondary btn-sm" type="submit" value="Remove from WatchList">
-                </form>
+<form action="{% url 'watch_list' %}" method="post">
+    {% csrf_token %}
+    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
+    <input class="btn btn-secondary btn-sm" type="submit" value="Remove from WatchList">
+</form>
             {%endif%}
         {%endif%}
 
     {% endif %}
 
-    <br>
+<br>
 
-    <ul class="list-group">
-        {% for comment in comments %}
-            <div class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">User: {{comment.user.username}}</h5>
-                    <small class="text-muted">{{comment.created}}</small>
-                </div>
-                <p class="mb-1">{{comment.text}}</p>
-            </div>
-        {% endfor %}
-    </ul>
+<ul class="list-group">
+    {% for comment in comments %}
+    <div class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">User: {{comment.user.username}}</h5>
+            <small class="text-muted">{{comment.created}}</small>
+        </div>
+        <p class="mb-1">{{comment.text}}</p>
+    </div>
+    {% endfor %}
+</ul>
 
-    <br>
+<br>
 
     {% if user.is_authenticated and article.active %}
-        <form action="{% url 'make_comment' article.id %}" method="post">
-            {% csrf_token %}
-            <textarea class="form-control" id="comment-body" placeholder="Write comment here..", name="comment_text"></textarea>
-            <input class="btn btn-secondary btn-sm" type="submit" value="Add Comment">
-        </form>
+<form action="{% url 'make_comment' article.id %}" method="post">
+    {% csrf_token %}
+    <textarea class="form-control" id="comment-body" placeholder="Write comment here.." , name="comment_text"></textarea>
+    <input class="btn btn-secondary btn-sm" type="submit" value="Add Comment">
+</form>
+    {% endif %}
     {% endif %}
 
 

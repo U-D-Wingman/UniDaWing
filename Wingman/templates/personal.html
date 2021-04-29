@@ -1,0 +1,11 @@
+{% block body %}
+<h2>{{user.username}}</h2>
+
+<p>{{user.email}}</p>
+<p>First Name:{{user.first_name}}</p>
+<p>Last Name:{{user.last_name}}</p>
+<p>Password:{{user.password}}</p>
+<img src="{{user.avatar}}">
+<p>We didn't find any informations.</p>
+
+{% endblock %}

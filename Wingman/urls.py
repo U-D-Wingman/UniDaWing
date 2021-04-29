@@ -38,6 +38,12 @@ urlpatterns = [
     path("joined_request",views.joined_request,name="joined_request"),
     path("request_comment/<int:request_id>",views.request_comment,name="request_comment"),
     path("request_categories",views.request_categories,name="request_categories"),
-    path("listed_request_by_category/<int:category_id>",views.listed_request_by_category,name="listed_request_by_category")
+    path("listed_request_by_category/<int:category_id>",views.listed_request_by_category,name="listed_request_by_category"),
+
+    path("appoint/<int:sportfield_id>",views.appoint,name="appoint"),
+    path("deappoint/<int:sportfield_id>",views.deappoint,name="deappoint"),
+    path("chats",views.chat,name="chats"),
+    path("personal",views.personal,name="personal")
+
 ]
 

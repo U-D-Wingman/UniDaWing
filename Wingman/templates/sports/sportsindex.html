@@ -1,42 +1,57 @@
 {% extends "sports/layout.html" %}
 
 {% block body %}
-    <h2>{{title}}</h2>
+    <h2>The sportfields</h2>
 
-    {% for auction in auctions %}
+    {% for sportfield in sportfields %}
     <div style="clear: left; float:none; margin-bottom:150px;">
-        {% if auction.article_image != "" %}
-        <img style="float:left; margin-right:60px" src="{{auction.article_image}}" width="200" height="200">
+        <img style="float:left; margin-right:60px" src="media/{{sportfield.image}}" width="200" height="200">
+
+        <p>
+
+            <span style="font-weight: bold">
+                <a>{{sportfield.name}}</a>
+            </span>
+            <br>
+            <span style="font-weight: bold">Price:</span>RMB
+            {{sportfield.price}}
+        </p>
+        <br>
+        {{sportfield.type}}
+        {% if user.is_authenticated %}
+        {% if sportfield.active %}
+        <form action="{% url 'appoint' sportfield.pk %}" method="post">
+            {% csrf_token %}
+            <input class="btn btn-primary" type="submit" value="Appoint">
+        </form>
         {% else %}
-        <img style="float:left; margin-right:60px" src="media/{{auction.image}}" width="200" height="200">
-        {% endif%}
-        <div>
-            <p>
-                <span style="font-weight: bold">
-                    <a href="{% url 'listed_article' auction.pk %}">{{auction.title}}</a>
-                </span>
-                <br>
-                <span style="font-weight: bold">Price:</span>RMB
-                {% if auction.last_bid %}
-                {{auction.last_bid.price}}
-                {%else%}
-                {{auction.initial_price}}
-                {% endif %}
-                <br>
-                {{auction.description}}
-            </p>
+        <form action="{% url 'deappoint' sportfield.pk %}" method="post">
+            {% csrf_token %}
+            <input class="btn btn-secondary btn-smy" type="submit" value="End">
+        </form>
 
-            {% if auction.final_buyer%}
-            <p style="color:red">Sold to: {{auction.final_buyer.username}} </p>
-            {%endif%}
+        {%endif%}
 
-        </div>
+        {%if sportfield.cur_user is None%}
+        <p style="color:cadetblue">This field is availiable now. </p>
+        {% elif sportfield.cur_user.pk == request.user.pk %}
+        <strong><p style="color:red">Current User: You </p></strong>
+
+        {% else %}
+        <p style="color:red">Current User: {{sportfield.cur_user}} </p>
+        {%endif%}
+
+
+        {% else %}
+        <br>
+        <a style="color:indianred" href="{% url 'login' %}">Log in to check the current status of this field.</a>
+        {% endif %}
     </div>
 
 
 
     {% empty %}
-        <p>There is no active listing</p>
+        <p>There is no sportfields.</p>
     {% endfor %}
 
 {% endblock %}
