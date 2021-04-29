@@ -121,7 +121,7 @@ class Request(models.Model):
     description = models.TextField()
     bringup_time=models.DateTimeField(auto_now_add=True)
     num_joins = models.IntegerField(default=0)
-    category = models.ForeignKey(Request_Category, on_delete=models.CASCADE, related_name="request")
+    category = models.ForeignKey(Request_Category, on_delete=models.CASCADE, related_name="requests")
     active = models.BooleanField()
     success= models.BooleanField(default=False)
     # user =models.ForeignKey(User, on_delete=models.CASCADE,related_name="request")
