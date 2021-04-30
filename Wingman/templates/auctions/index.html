@@ -1,4 +1,47 @@
-{% extends "auctions/layout.html" %}
+{% extends "../index.html" %}
+
+{% block trade_item %}
+<div class="row">
+    {% for auction in auctions %}
+    <div class="col-lg-4">
+        <div class="card" style="width:400px;height:300px;">
+            <div class="shopping-card" align="center" style="height:50%;">
+                {% if auction.article_image != "" %}
+
+                <img sclass="img-responsive" src="{{auction.article_image}}" alt="" style="width:50%;" >
+
+                {% else %}
+                <img class="img-responsive" src="media/{{auction.image}}" alt="">
+                {% endif%}
+            </div>
+            <div class="shopping-card-text text-center">
+                <h4>{{auction.title}}</h4>
+                <p>{{auction.description}}</p>
+            </div>
+            <div class="text-center p-t-30 p-b-20">
+                <a href="{% url 'listed_article' auction.pk %}" class="btn btn-primary bg-primary btn-outline">Shop Now</a>
+                <span class="p-10 color-danger f-w-400" style="color:blue;">
+                    {{auction.current_highest_price}}
+                </span>|
+                <span class="p-10 color-danger f-w-400" style="color:red;">
+                    {{auction.initial_price}}
+                </span>
+            </div>
+        </div>
+    </div>
+
+        {% if auction.final_buyer%}
+        <p style="color:red">Sold to: {{auction.final_buyer.username}} </p>
+        {%endif%}
+
+
+
+    {% empty %}
+<!--        <p>There is no active listing</p>-->
+    {% endfor %}
+</div>
+{% endblock %}
+
 
 {% block body %}
 <h2>{{title}}</h2>
@@ -22,6 +65,7 @@
             <span style="font-weight: bold">Current Highest Price:</span>RMB
             {{auction.current_highest_price}}
             <br>
+
             {{auction.description}}
         </p>
 
@@ -32,10 +76,12 @@
     </div>
 </div>
 
-
-
     {% empty %}
-<p>There is no active listing</p>
+        <p>There is no active listing</p>
     {% endfor %}
 
+{% endblock %}
+
+{% block 123 %}
+    <span>hello</span>
 {% endblock %}

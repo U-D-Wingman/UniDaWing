@@ -17,4 +17,9 @@ function validate_bid(bid_value, initial) {
    
    return true;
 
- }
+}
+
+function switch_active(element_id){
+    var element = document.getElementById(element_id);
+    element.className += "active";
+}

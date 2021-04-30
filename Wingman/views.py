@@ -21,25 +21,26 @@ from .models import *
 
 
 def index(request):
-        title = '首页'
+        title = 'University Daily Wingman System'
         page_content=[]
         entries=util.list_entries()
 
         dict_vars = {"title": title, "entries":entries,"page_content":page_content }
 
-        return render(request, "home.html", dict_vars)
+        return render(request, "index.html", dict_vars)
 
 
 
 def auctionindex(request):
+    title = 'Trade System'
     auctions = {}
     auctions = Auction.objects.filter(active=True).all()
-    dict_vars={"auctions":auctions}
+    dict_vars={"title": title,"auctions":auctions}
     return render(request, "auctions/index.html",dict_vars)
 
 
 def sportsindex(request):
-        title = 'Active listings'
+        title = 'Sports System'
     
         sportfields = SportField.objects.all()
     
@@ -49,15 +50,17 @@ def sportsindex(request):
 
 
 def delivery(request):
+    title = 'Delivery System'
     deli = Delivery.objects.all()
-    dict_vars={"deliveries":deli}
+    dict_vars={"title": title,"deliveries":deli}
     return render(request,"deliveries/deliveries.html",dict_vars)
 
 
 def requestindex(request):
+    title = 'Request System'
     requests={}
     requests= Request.objects.filter(active=True).all()
-    dict_vars={"requests":requests}
+    dict_vars={"title": title,"requests":requests}
     return render(request, "request/index.html",dict_vars)
 
 def login_view(request):
@@ -103,7 +106,7 @@ def register(request):
             user = User.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
-            return render(request, "auctions/register.html", {
+            return render(request, "register.html", {
                 "message": "Username already taken."
             })
         login(request, user)
@@ -287,18 +290,6 @@ def listed_article_by_category(request, category_id):
     return render(request, "auctions/index.html", dict_vars)
 
 
-def sportfields(request):
-    try:
-        title = 'Active listings'
-
-        sportfields = {}
-        sportfields = SportField.objects.filter(active=True).all()
-
-        dict_vars = {"title": title, "sportfields": sportfields}
-
-        return render(request, "auctions/sportfields.html", dict_vars)
-    except:
-        return render(request, "auctions/error.html", dict_vars)
 
 
 ###################################################################################
@@ -455,6 +446,23 @@ def listed_request_by_category(request, category_id):
 
     return render(request, "request/index.html", dict_vars)
 
+######################################################################
+"""
+    Gym Sports
+"""
+def sportfields(request):
+    try:
+        title = 'Active listings'
+
+        sportfields = {}
+        sportfields = SportField.objects.filter(active=True).all()
+
+        dict_vars = {"title": title, "sportfields": sportfields}
+
+        return render(request, "sports/sportfield.html", dict_vars)
+    except:
+        return render(request, "auctions/error.html", dict_vars)
+
 def appoint(request,sportfield_id):
    if request.method == "POST":
        afield=SportField.objects.get(pk=sportfield_id)
@@ -478,8 +486,9 @@ def deappoint(request,sportfield_id):
 )
 
 def chat(request):
+    title = 'Chatting Room'
     chats=Chatting.objects.all()
-    dict_vars={"chats":chats}
+    dict_vars={"title": title,"chats":chats}
     if request.method == "POST":
         chat = Chatting(user=request.user, text=request.POST["chat_text"])
         if len(chat.text)==0: return render(request,"sports/chattingroom.html",dict_vars)

@@ -33,7 +33,7 @@
 
     /*  
     -----------------
-    Chat Sidebar
+    chat Sidebar
     ---------------------*/
 
 
@@ -109,7 +109,7 @@
 
 
 
-    /*  Chat Sidebar User custom Search
+    /*  chat Sidebar User custom Search
     ---------------------------------------*/
 
     $('[data-search]').on('keyup', function() {
