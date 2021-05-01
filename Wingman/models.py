@@ -81,6 +81,7 @@ class AucPic(models.Model):
 
 class SportField(models.Model):
     name=models.CharField(max_length=64)
+    sub_id=models.IntegerField(default=0)
     type=models.ForeignKey(Sport_Cat,on_delete=models.CASCADE,related_name="sportfield")
     price=models.FloatField()
     active=models.BooleanField()

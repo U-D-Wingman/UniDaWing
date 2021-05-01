@@ -43,8 +43,45 @@ def sportsindex(request):
         title = 'Sports System'
     
         sportfields = SportField.objects.all()
-    
-        dict_vars = {"title": title, "sportfields": sportfields}
+        basketballs=SportField.objects.filter(type=1).all()
+        badmintons = SportField.objects.filter(type=2).all()
+        table_tennises=SportField.objects.filter(type=3).all()
+        billiards = SportField.objects.filter(type=4).all()
+        num_basketball=total_basketball=0
+        for basketball in basketballs:
+            if not basketball.active:
+                num_basketball=num_basketball+1
+            total_basketball=total_basketball+1
+        per_basketball=int(float(num_basketball)/float(total_basketball)*100)
+
+        num_badminton = total_badminton = 0
+        for badminton in badmintons:
+            if not badminton.active:
+                num_badminton=num_badminton+1
+            total_badminton=total_badminton+1
+        per_badminton=int(float(num_badminton)/float(total_badminton)*100)
+
+        num_table_tennis = total_table_tennis = 0
+        for table_tennis in table_tennises:
+            if not table_tennis.active:
+                num_table_tennis = num_table_tennis + 1
+            total_table_tennis = total_table_tennis + 1
+        per_table_tennis = int(float(num_table_tennis) / float(total_table_tennis) * 100)
+
+        num_billiard = total_billiard = 0
+        for billiard in billiards:
+            if not billiard.active:
+                num_billiard = num_billiard + 1
+            total_billiard = total_billiard + 1
+        per_billiard = int(float(num_billiard) / float(total_billiard) * 100)
+
+
+        dict_vars = {"title": title, "sportfields": sportfields,
+                     "basketballs":basketballs, "num_basketball":num_basketball,"per_basketball":per_basketball,
+                     "badmintons":badmintons, "num_badminton": num_badminton, "per_badminton": per_badminton,
+                     "table_tennises":table_tennises, "num_table_tennis": num_table_tennis, "per_table_tennis": per_table_tennis,
+                     "billiards":billiards, "num_billiard": num_billiard, "per_billiard": per_billiard,
+                     }
 
         return render(request, "sports/sportsindex.html", dict_vars)
 
@@ -464,26 +501,25 @@ def sportfields(request):
         return render(request, "auctions/error.html", dict_vars)
 
 def appoint(request,sportfield_id):
-   if request.method == "POST":
-       afield=SportField.objects.get(pk=sportfield_id)
-       afield.active=False
-       afield.cur_user=request.user
-       aptm = Appointment(founder=request.user, field=afield,description="Default Rent",active=True)
-       aptm.save()
-       afield.save()
-   sportfields = SportField.objects.all()
-   return render(request,"sports/sportsindex.html",{"sportfields": sportfields}
-)
+    afield=SportField.objects.get(pk=sportfield_id)
+    afield.active=False
+    afield.cur_user=request.user
+    aptm = Appointment(founder=request.user, field=afield,description="Default Rent",active=True)
+    aptm.save()
+    afield.save()
+    sportfields = SportField.objects.all()
+    return HttpResponseRedirect(reverse("sportsindex"))
+   # return render(request,"sports/sportsindex.html",{"sportfields": sportfields})
 
 def deappoint(request,sportfield_id):
-   if request.method == "POST":
-       afield=SportField.objects.get(pk=sportfield_id)
-       afield.active=True
-       afield.cur_user=None
-       afield.save()
-   sportfields = SportField.objects.all()
-   return render(request,"sports/sportsindex.html",{"sportfields": sportfields}
-)
+    afield=SportField.objects.get(pk=sportfield_id)
+    afield.active=True
+    afield.cur_user=None
+    afield.save()
+    afield.appointment.active=False
+    sportfields = SportField.objects.all()
+    return HttpResponseRedirect(reverse("sportsindex"))
+    # return render(request,"sports/sportsindex.html",{"sportfields": sportfields}
 
 def chat(request):
     title = 'Chatting Room'

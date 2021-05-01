@@ -23,6 +23,6 @@
 
 
     // init
-    loadWeather('Dhaka', '');
+    loadWeather('Dalian', '');
 
 })(jQuery);

@@ -1,17 +1,18 @@
-{% extends "../index.html" %}
+{% extends "./layout.html" %}
 
 {% block trade_item %}
 <div class="row">
     {% for auction in auctions %}
     <div class="col-lg-4">
-        <div class="card" style="width:400px;height:300px;">
+        <div class="col-lg-12">
+            <div class="card" >
             <div class="shopping-card" align="center" style="height:50%;">
                 {% if auction.article_image != "" %}
 
-                <img sclass="img-responsive" src="{{auction.article_image}}" alt="" style="width:50%;" >
+                <img class="img-responsive" src="{{auction.article_image}}" alt="" style="width:250px;height:150px;" >
 
                 {% else %}
-                <img class="img-responsive" src="media/{{auction.image}}" alt="">
+                <img class="img-responsive" src="media/{{auction.image}}" alt="" style="width:250px;height:150px;">
                 {% endif%}
             </div>
             <div class="shopping-card-text text-center">
@@ -28,6 +29,8 @@
                 </span>
             </div>
         </div>
+        </div>
+
     </div>
 
         {% if auction.final_buyer%}

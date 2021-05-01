@@ -46,9 +46,9 @@
     <input class="btn btn-primary" type="submit" value="Sale it to {{bid.user}}">
 </form>
 
-{%endif%}
+<!--{%endif%}-->
 
-{%endfor %}
+<!--{%endfor %}-->
 
     {% if user.is_authenticated %}
     {% if article.active %}
@@ -65,35 +65,35 @@
 </form>
     {% else %}
 
-    {% if not last_bid %}
-<form action="{% url 'edit_auction' article.id %}" method="post">
-    {% csrf_token %}
-    <div class="form-group">
-        <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-        <input class="btn btn-primary" type="submit" value="Edit Auction">
-    </div>
+<!--    {% if not last_bid %}-->
+<!--<form action="{% url 'edit_auction' article.id %}" method="post">-->
+<!--    {% csrf_token %}-->
+<!--    <div class="form-group">-->
+<!--        <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">-->
+<!--        <input class="btn btn-primary" type="submit" value="Edit Auction">-->
+<!--    </div>-->
 
-</form>
-    {% else %}
-<form action="{% url 'edit_auction' article.id %}" method="post">
-    {% csrf_token %}
-    <div class="form-group">
-        <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-        <input class="btn btn-primary" type="submit" value="Edit Auction" disabled="disabled">
-    </div>
-</form>
-    {% endif %}
-    {% endif %}
-    {% else%}
-<p style="color:red">
-    Buyer:                {% if article.final_buyer.pk != request.user.pk %}
+<!--</form>-->
+<!--    {% else %}-->
+<!--<form action="{% url 'edit_auction' article.id %}" method="post">-->
+<!--    {% csrf_token %}-->
+<!--    <div class="form-group">-->
+<!--        <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">-->
+<!--        <input class="btn btn-primary" type="submit" value="Edit Auction" disabled="disabled">-->
+<!--    </div>-->
+<!--</form>-->
+<!--    {% endif %}-->
+<!--    {% endif %}-->
+<!--    {% else%}-->
+<!--<p style="color:red">-->
+<!--    Buyer:                {% if article.final_buyer.pk != request.user.pk %}-->
 
-    {{article.final_buyer.username}}
-    {% else%}
-    You won. Congratulations!
-    {% endif %}
-</p>
-        {% endif %}
+<!--    {{article.final_buyer.username}}-->
+<!--    {% else%}-->
+<!--    You won. Congratulations!-->
+<!--    {% endif %}-->
+<!--</p>-->
+<!--        {% endif %}-->
 
 <br>
 
@@ -114,32 +114,32 @@
             {%endif%}
         {%endif%}
 
-    {% endif %}
+<!--    {% endif %}-->
 
-<br>
+<!--<br>-->
 
-<ul class="list-group">
-    {% for comment in comments %}
-    <div class="list-group-item list-group-item-action flex-column align-items-start">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">User: {{comment.user.username}}</h5>
-            <small class="text-muted">{{comment.created}}</small>
-        </div>
-        <p class="mb-1">{{comment.text}}</p>
-    </div>
-    {% endfor %}
-</ul>
+<!--<ul class="list-group">-->
+<!--    {% for comment in comments %}-->
+<!--    <div class="list-group-item list-group-item-action flex-column align-items-start">-->
+<!--        <div class="d-flex w-100 justify-content-between">-->
+<!--            <h5 class="mb-1">User: {{comment.user.username}}</h5>-->
+<!--            <small class="text-muted">{{comment.created}}</small>-->
+<!--        </div>-->
+<!--        <p class="mb-1">{{comment.text}}</p>-->
+<!--    </div>-->
+<!--    {% endfor %}-->
+<!--</ul>-->
 
-<br>
+<!--<br>-->
 
-    {% if user.is_authenticated and article.active %}
-<form action="{% url 'make_comment' article.id %}" method="post">
-    {% csrf_token %}
-    <textarea class="form-control" id="comment-body" placeholder="Write comment here.." , name="comment_text"></textarea>
-    <input class="btn btn-secondary btn-sm" type="submit" value="Add Comment">
-</form>
-    {% endif %}
-    {% endif %}
+<!--    {% if user.is_authenticated and article.active %}-->
+<!--<form action="{% url 'make_comment' article.id %}" method="post">-->
+<!--    {% csrf_token %}-->
+<!--    <textarea class="form-control" id="comment-body" placeholder="Write comment here.." , name="comment_text"></textarea>-->
+<!--    <input class="btn btn-secondary btn-sm" type="submit" value="Add Comment">-->
+<!--</form>-->
+<!--    {% endif %}-->
+<!--    {% endif %}-->
 
 
 {% endblock %}
