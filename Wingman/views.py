@@ -24,10 +24,62 @@ def index(request):
         title = 'University Daily Wingman System'
         page_content=[]
         entries=util.list_entries()
+        selected_comments = Chatting.objects.filter(announcement=True).all()
+        sportfields = SportField.objects.all()
+        basketballs = SportField.objects.filter(type=1).all()
+        badmintons = SportField.objects.filter(type=2).all()
+        table_tennises = SportField.objects.filter(type=3).all()
+        billiards = SportField.objects.filter(type=4).all()
+        appointments = []
+        aptms = Appointment.objects.all().order_by('-bringup_time')
+        num_basketball = total_basketball = 0
+        for basketball in basketballs:
+            appointments.append(aptms.filter(field=basketball).first())
+            if not basketball.active:
+                num_basketball = num_basketball + 1
+            total_basketball = total_basketball + 1
+        per_basketball = int(float(num_basketball) / float(total_basketball) * 100)
 
-        dict_vars = {"title": title, "entries":entries,"page_content":page_content }
+        num_badminton = total_badminton = 0
+        for badminton in badmintons:
+            appointments.append(aptms.filter(field=badminton).first())
+            if not badminton.active:
+                num_badminton = num_badminton + 1
+            total_badminton = total_badminton + 1
+        per_badminton = int(float(num_badminton) / float(total_badminton) * 100)
 
-        return render(request, "index.html", dict_vars)
+        num_table_tennis = total_table_tennis = 0
+        for table_tennis in table_tennises:
+            appointments.append(aptms.filter(field=table_tennis).first())
+            if not table_tennis.active:
+                num_table_tennis = num_table_tennis + 1
+            total_table_tennis = total_table_tennis + 1
+        per_table_tennis = int(float(num_table_tennis) / float(total_table_tennis) * 100)
+
+        num_billiard = total_billiard = 0
+        for billiard in billiards:
+            appointments.append(aptms.filter(field=billiard).first())
+            if not billiard.active:
+                num_billiard = num_billiard + 1
+            total_billiard = total_billiard + 1
+        per_billiard = int(float(num_billiard) / float(total_billiard) * 100)
+
+        deli = Delivery.objects.all()
+        dict_vars = {"title": title, }
+
+        dict_vars = {"title": title, "sportfields": sportfields, "aptms": appointments,
+                     "basketballs": basketballs, "num_basketball": num_basketball, "per_basketball": per_basketball,
+                     "badmintons": badmintons, "num_badminton": num_badminton, "per_badminton": per_badminton,
+                     "table_tennises": table_tennises, "num_table_tennis": num_table_tennis,
+                     "per_table_tennis": per_table_tennis,
+                     "billiards": billiards, "num_billiard": num_billiard, "per_billiard": per_billiard,
+                     "deliveries": deli,"sel_coms":selected_comments
+                     }
+
+
+        # dict_vars = {"title": title, "entries":entries,"page_content":page_content }
+
+        return render(request, "home.html", dict_vars)
 
 
 
@@ -41,14 +93,17 @@ def auctionindex(request):
 
 def sportsindex(request):
         title = 'Sports System'
-    
+
         sportfields = SportField.objects.all()
         basketballs=SportField.objects.filter(type=1).all()
         badmintons = SportField.objects.filter(type=2).all()
         table_tennises=SportField.objects.filter(type=3).all()
         billiards = SportField.objects.filter(type=4).all()
+        appointments = []
+        aptms = Appointment.objects.all().order_by('-bringup_time')
         num_basketball=total_basketball=0
         for basketball in basketballs:
+            appointments.append(aptms.filter(field=basketball).first())
             if not basketball.active:
                 num_basketball=num_basketball+1
             total_basketball=total_basketball+1
@@ -56,6 +111,7 @@ def sportsindex(request):
 
         num_badminton = total_badminton = 0
         for badminton in badmintons:
+            appointments.append(aptms.filter(field=badminton).first())
             if not badminton.active:
                 num_badminton=num_badminton+1
             total_badminton=total_badminton+1
@@ -63,6 +119,7 @@ def sportsindex(request):
 
         num_table_tennis = total_table_tennis = 0
         for table_tennis in table_tennises:
+            appointments.append(aptms.filter(field=table_tennis).first())
             if not table_tennis.active:
                 num_table_tennis = num_table_tennis + 1
             total_table_tennis = total_table_tennis + 1
@@ -70,13 +127,13 @@ def sportsindex(request):
 
         num_billiard = total_billiard = 0
         for billiard in billiards:
+            appointments.append(aptms.filter(field=billiard).first())
             if not billiard.active:
                 num_billiard = num_billiard + 1
             total_billiard = total_billiard + 1
         per_billiard = int(float(num_billiard) / float(total_billiard) * 100)
 
-
-        dict_vars = {"title": title, "sportfields": sportfields,
+        dict_vars = {"title": title, "sportfields": sportfields,"aptms":appointments,
                      "basketballs":basketballs, "num_basketball":num_basketball,"per_basketball":per_basketball,
                      "badmintons":badmintons, "num_badminton": num_badminton, "per_badminton": per_badminton,
                      "table_tennises":table_tennises, "num_table_tennis": num_table_tennis, "per_table_tennis": per_table_tennis,
@@ -233,7 +290,24 @@ def close_auction(request,bid_id):
             auction.save()
         return HttpResponseRedirect(reverse("listed_article", args=[article_id]))
 
+def deactive_auction(request):
+    if request.method == "POST":
+        article_id = request.POST["article_id"]
+        auction = Auction.objects.get(pk=article_id)
+        auction.active=False
+        auction.save()
+        return HttpResponseRedirect(reverse("listed_article", args=[article_id]))
+
+def active_auction(request):
+    if request.method == "POST":
+        article_id = request.POST["article_id"]
+        auction = Auction.objects.get(pk=article_id)
+        auction.active=True
+        auction.save()
+        return HttpResponseRedirect(reverse("listed_article", args=[article_id]))
+
 def edit_auction(request,article_id):
+    user_existed_auctions = Auction.objects.filter(owner=request.user).all()
     if request.method == "POST":
         # article_id = request.POST["article_id"]
         auction = Auction.objects.get(pk=article_id)
@@ -243,7 +317,7 @@ def edit_auction(request,article_id):
         # url = request.POST["article_img"]
         # initial_price = request.POST["initial_price"]
 
-        dict_vars = {"auction": auction,"categories":Category.objects.all(),"test":str(auction.category)}
+        dict_vars = {"auction": auction,"categories":Category.objects.all(),"test":str(auction.category),"user_existed_auctions":user_existed_auctions}
 
         # dict_vars.update({"comments": Comment.objects.filter(auction=article).order_by("-created").all(),
         #                   "auctions_ids_in_watch_list": auctions_ids_in_watch_list})
@@ -336,6 +410,7 @@ def listed_article_by_category(request, category_id):
 
 @login_required
 def create_request(request):
+    user_existed_requests = Request_Joined_List.objects.filter(user=request.user).all()
     if request.method == "POST":
         title = request.POST["title"]
         description = request.POST["description"]
@@ -358,7 +433,7 @@ def create_request(request):
         w.save()
         return HttpResponseRedirect(reverse('listed_request', args=[req.id], ))
 
-    dict_vars = {"categories": Request_Category.objects.all()}
+    dict_vars = {"categories": Request_Category.objects.all(),"user_existed_requests":user_existed_requests}
 
     return render(request, "request/create_listing.html", dict_vars)
 
@@ -526,9 +601,8 @@ def chat(request):
     chats=Chatting.objects.all()
     dict_vars={"title": title,"chats":chats}
     if request.method == "POST":
-        chat = Chatting(user=request.user, text=request.POST["chat_text"])
-        if len(chat.text)==0: return render(request,"sports/chattingroom.html",dict_vars)
-
+        chat = Chatting(user=request.user, text=request.POST["chat_text"],announcement=False)
+        if len(chat.text)==0: return HttpResponseRedirect(reverse("chats"))
         chat.save()
     return render(request,"sports/chattingroom.html",dict_vars)
 

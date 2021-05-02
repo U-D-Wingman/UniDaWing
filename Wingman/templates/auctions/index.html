@@ -17,25 +17,33 @@
             </div>
             <div class="shopping-card-text text-center">
                 <h4>{{auction.title}}</h4>
-                <p>{{auction.description}}</p>
+<!--                <p>{{auction.description}}</p>-->
             </div>
-            <div class="text-center p-t-30 p-b-20">
-                <a href="{% url 'listed_article' auction.pk %}" class="btn btn-primary bg-primary btn-outline">Shop Now</a>
+            <div class="text-center p-t-20 p-b-10">
                 <span class="p-10 color-danger f-w-400" style="color:blue;">
-                    {{auction.current_highest_price}}
-                </span>|
-                <span class="p-10 color-danger f-w-400" style="color:red;">
-                    {{auction.initial_price}}
-                </span>
+                <span class="m-r-3">Highest:</span>{{auction.current_highest_price}}
+            </span>|
+            <span class="p-10 color-danger f-w-400" style="color:red;">
+                <span class="m-r-3">Initial:</span>{{auction.initial_price}}
+            </span>|
+            {% if auction.final_buyer%}
+                <span class="badge badge-warning m-l-10">Sold</span>
+            {% elif not auction.active %}
+                <span class="badge badge-danger m-l-10">Closed</span>
+            {% else %}
+                <span class="badge badge-primary m-l-10">Sale</span>
+            {%endif%}
+            </div>
+            <div class="text-center p-t-20 p-b-20">
+                <a href="{% url 'listed_article' auction.pk %}" class="btn btn-primary bg-primary btn-outline">More Detail</a>
+
             </div>
         </div>
         </div>
 
     </div>
 
-        {% if auction.final_buyer%}
-        <p style="color:red">Sold to: {{auction.final_buyer.username}} </p>
-        {%endif%}
+
 
 
 

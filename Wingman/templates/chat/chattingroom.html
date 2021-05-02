@@ -16,8 +16,19 @@
     {% if user.is_authenticated %}
     <form action="{% url 'chats' %}" method="POST">
         {% csrf_token %}
-        <textarea class="form-control" id="comment-body" placeholder="Write your opinions here.." , name="chat_text"></textarea>
-        <input class="btn btn-secondary btn-sm" type="submit" value="Add Chat">
+        <textarea class="form-control" style="height:100px;" id="comment-body" placeholder="Write your opinions here.." , name="chat_text"></textarea>
+<!--                    <div class="basic-form">-->
+<!--                        <div class="form-group">-->
+<!--                            <label>Category</label>-->
+<!--                            <select class="form-control bg-ash border-none" style="height:20px;" name="category">-->
+<!--                                {% for c in chatcats %}-->
+<!--                                <option value="{{c.id}}">{{c.name}}</option>-->
+<!--                                {%endfor%}-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                    </div>-->
+        <span class="m-r-10"><input class="btn btn-warning btn-md m-t-10" type="submit" value="Add Chat"></span>
+
     </form>
 
     {% endif %}

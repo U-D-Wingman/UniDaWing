@@ -9,10 +9,10 @@
         width:33%;
     }
     .w-66{
-        width:6%!important;
+        width:66%;
     }
     .w-83{
-        width:83%!important;
+        width:83%;
     }
 </style>
 <div class="row">
@@ -144,20 +144,20 @@
         <div class="card alert" style="height:413px;">
             <div class="card-header">
                 <h4>BASKETBALL</h4>
-                <div class="card-header-right-icon">
-                    <ul>
-                        <li class="card-close" data-dismiss="alert"><i class="ti-close"></i></li>
-                        <li class="card-option drop-menu"><i class="ti-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="link"></i>
-                            <ul class="card-option-dropdown dropdown-menu">
-                                <li><a href="#"><i class="ti-loop"></i> Update data</a></li>
-                                <li><a href="#"><i class="ti-menu-alt"></i> Detail log</a></li>
-                                <li><a href="#"><i class="ti-pulse"></i> Statistics</a></li>
-                                <li><a href="#"><i class="ti-power-off"></i> Clear ist</a></li>
-                            </ul>
-                        </li>
-                        <li class="doc-link"><a href="#"><i class="ti-link"></i></a></li>
-                    </ul>
-                </div>
+<!--                <div class="card-header-right-icon">-->
+<!--                    <ul>-->
+<!--                        <li class="card-close" data-dismiss="alert"><i class="ti-close"></i></li>-->
+<!--                        <li class="card-option drop-menu"><i class="ti-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="link"></i>-->
+<!--                            <ul class="card-option-dropdown dropdown-menu">-->
+<!--                                <li><a href="#"><i class="ti-loop"></i> Update data</a></li>-->
+<!--                                <li><a href="#"><i class="ti-menu-alt"></i> Detail log</a></li>-->
+<!--                                <li><a href="#"><i class="ti-pulse"></i> Statistics</a></li>-->
+<!--                                <li><a href="#"><i class="ti-power-off"></i> Clear ist</a></li>-->
+<!--                            </ul>-->
+<!--                        </li>-->
+<!--                        <li class="doc-link"><a href="#"><i class="ti-link"></i></a></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -180,11 +180,15 @@
                                 {% if basketball.active %}
                                 <td><a href="{% url 'appoint' basketball.pk %}"><span class="badge badge-primary">Free</span></a></td>
                                 <td>--</td>
-                                <td class="color-primary" style="text-align: center;">$25</td>
+                                <td class="color-primary" style="text-align: center;">￥25</td>
                                 {% else %}
                                 <td><a href="{% url 'deappoint' basketball.pk %}"><span class="badge badge-danger">Using</span></a></td>
-                                <td>{{basketball.active_time}}</td>
-                                <td class="color-danger" style="text-align: center;">$25</td>
+                                {% for aptm in aptms%}
+                                {% if aptm.field == basketball %}
+                                <td>{{aptm.bringup_time}}</td>
+                                {% endif %}
+                                {% endfor %}
+                                <td class="color-danger" style="text-align: center;">￥25</td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
@@ -193,21 +197,21 @@
 <!--                                <td>BASKETBALL - 2</td>-->
 <!--                                <td><span class="badge badge-success">Free</span></td>-->
 <!--                                <td>January 30</td>-->
-<!--                                <td class="color-success" style="text-align: center;">$25</td>-->
+<!--                                <td class="color-success" style="text-align: center;">￥25</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">3</th>-->
 <!--                                <td>BASKETBALL - 3</td>-->
 <!--                                <td><span class="badge badge-danger">Using</span></td>-->
 <!--                                <td>January 25</td>-->
-<!--                                <td class="color-danger" style="text-align: center;">$25</td>-->
+<!--                                <td class="color-danger" style="text-align: center;">￥25</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">4</th>-->
 <!--                                <td>BASKETBALL - 4</td>-->
 <!--                                <td><span class="badge badge-primary">Ordered</span></td>-->
 <!--                                <td>January 25</td>-->
-<!--                                <td class="color-primary" style="text-align: center;">$25</td>-->
+<!--                                <td class="color-primary" style="text-align: center;">￥25</td>-->
 <!--                            </tr>-->
                         </tbody>
                     </table>
@@ -243,11 +247,15 @@
                                 {% if badminton.active %}
                                 <td><a href="{% url 'appoint' badminton.pk %}"><span class="badge badge-primary">Free</span></a></td>
                                 <td>--</td>
-                                <td class="color-primary" style="text-align: center;">$8</td>
+                                <td class="color-primary" style="text-align: center;">￥8</td>
                                 {% else %}
                                 <td><a href="{% url 'deappoint' badminton.pk %}"><span class="badge badge-danger">Using</span></a></td>
-                                <td>{{badminton.active_time}}</td>
-                                <td class="color-danger" style="text-align: center;">$8</td>
+                                {% for aptm in aptms%}
+                                {% if aptm.field == badminton %}
+                                <td>{{aptm.bringup_time}}</td>
+                                {% endif %}
+                                {% endfor %}
+                                <td class="color-danger" style="text-align: center;">￥8</td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
@@ -256,42 +264,42 @@
 <!--                                <td>BADMINTON - 1</td>-->
 <!--                                <td><span class="badge badge-primary">Ordered</span></td>-->
 <!--                                <td>January 22</td>-->
-<!--                                <td class="color-primary" style="text-align: center;">$8</td>-->
+<!--                                <td class="color-primary" style="text-align: center;">￥8</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">2</th>-->
 <!--                                <td>BADMINTON - 2</td>-->
 <!--                                <td><span class="badge badge-danger">Using</span></td>-->
 <!--                                <td>January 24</td>-->
-<!--                                <td class="color-danger" style="text-align: center;">$8</td>-->
+<!--                                <td class="color-danger" style="text-align: center;">￥8</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">3</th>-->
 <!--                                <td>BADMINTON - 3</td>-->
 <!--                                <td><span class="badge badge-primary">Ordered</span></td>-->
 <!--                                <td>January 20</td>-->
-<!--                                <td class="color-primary" style="text-align: center;">$8</td>-->
+<!--                                <td class="color-primary" style="text-align: center;">￥8</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">4</th>-->
 <!--                                <td>BADMINTON - 4</td>-->
 <!--                                <td><span class="badge badge-success">Free</span></td>-->
 <!--                                <td>January 30</td>-->
-<!--                                <td class="color-success" style="text-align: center;">$8</td>-->
+<!--                                <td class="color-success" style="text-align: center;">￥8</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">5</th>-->
 <!--                                <td>BADMINTON - 5</td>-->
 <!--                                <td><span class="badge badge-danger">Using</span></td>-->
 <!--                                <td>January 25</td>-->
-<!--                                <td class="color-danger" style="text-align: center;">$8</td>-->
+<!--                                <td class="color-danger" style="text-align: center;">￥8</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">6</th>-->
 <!--                                <td>BADMINTON - 6</td>-->
 <!--                                <td><span class="badge badge-success">Free</span></td>-->
 <!--                                <td>January 31</td>-->
-<!--                                <td class="color-success" style="text-align: center;">$8</td>-->
+<!--                                <td class="color-success" style="text-align: center;">￥8</td>-->
 <!--                            </tr>-->
                         </tbody>
                     </table>
@@ -327,11 +335,15 @@
                                 {% if table_tennis.active %}
                                 <td><a href="{% url 'appoint' table_tennis.pk %}"><span class="badge badge-primary">Free</span></a></td>
                                 <td>--</td>
-                                <td class="color-primary" style="text-align: center;">$6</td>
+                                <td class="color-primary" style="text-align: center;">￥6</td>
                                 {% else %}
                                 <td><a href="{% url 'deappoint' table_tennis.pk %}"><span class="badge badge-danger">Using</span></a></td>
-                                <td>{{table_tennis.active_time}}</td>
-                                <td class="color-danger" style="text-align: center;">$6</td>
+                                {% for aptm in aptms%}
+                                {% if aptm.field == table_tennis %}
+                                <td>{{aptm.bringup_time}}</td>
+                                {% endif %}
+                                {% endfor %}
+                                <td class="color-danger" style="text-align: center;">￥6</td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
@@ -340,42 +352,42 @@
 <!--                                <td>TABLE TENNIS - 1</td>-->
 <!--                                <td><span class="badge badge-primary">Ordered</span></td>-->
 <!--                                <td>January 22</td>-->
-<!--                                <td class="color-primary" style="text-align: center;">$6</td>-->
+<!--                                <td class="color-primary" style="text-align: center;">￥6</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">2</th>-->
 <!--                                <td>TABLE TENNIS - 2</td>-->
 <!--                                <td><span class="badge badge-danger">Using</span></td>-->
 <!--                                <td>January 24</td>-->
-<!--                                <td class="color-danger" style="text-align: center;">$6</td>-->
+<!--                                <td class="color-danger" style="text-align: center;">￥6</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">3</th>-->
 <!--                                <td>TABLE TENNIS - 3</td>-->
 <!--                                <td><span class="badge badge-primary">Ordered</span></td>-->
 <!--                                <td>January 20</td>-->
-<!--                                <td class="color-primary" style="text-align: center;">$6</td>-->
+<!--                                <td class="color-primary" style="text-align: center;">￥6</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">4</th>-->
 <!--                                <td>TABLE TENNIS - 4</td>-->
 <!--                                <td><span class="badge badge-success">Free</span></td>-->
 <!--                                <td>January 30</td>-->
-<!--                                <td class="color-success" style="text-align: center;">$6</td>-->
+<!--                                <td class="color-success" style="text-align: center;">￥6</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">5</th>-->
 <!--                                <td>TABLE TENNIS - 5</td>-->
 <!--                                <td><span class="badge badge-success">Free</span></td>-->
 <!--                                <td>January 31</td>-->
-<!--                                <td class="color-success" style="text-align: center;">$6</td>-->
+<!--                                <td class="color-success" style="text-align: center;">￥6</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">6</th>-->
 <!--                                <td>TABLE TENNIS - 6</td>-->
 <!--                                <td><span class="badge badge-danger">Using</span></td>-->
 <!--                                <td>January 25</td>-->
-<!--                                <td class="color-danger" style="text-align: center;">$6</td>-->
+<!--                                <td class="color-danger" style="text-align: center;">￥6</td>-->
 <!--                            </tr>-->
                         </tbody>
                     </table>
@@ -411,11 +423,15 @@
                                 {% if billiard.active %}
                                 <td><a href="{% url 'appoint' billiard.pk %}"><span class="badge badge-primary">Free</span></a></td>
                                 <td>--</td>
-                                <td class="color-primary" style="text-align: center;">$10</td>
+                                <td class="color-primary" style="text-align: center;">￥10</td>
                                 {% else %}
                                 <td><a href="{% url 'deappoint' billiard.pk %}"><span class="badge badge-danger">Using</span></a></td>
-                                <td>{{billiard.active_time}}</td>
-                                <td class="color-danger" style="text-align: center;">$10</td>
+                                {% for aptm in aptms%}
+                                {% if aptm.field == billiard %}
+                                <td>{{aptm.bringup_time}}</td>
+                                {% endif %}
+                                {% endfor %}
+                                <td class="color-danger" style="text-align: center;">￥10</td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
@@ -424,42 +440,42 @@
 <!--                                <td>BILLIARD - 1</td>-->
 <!--                                <td><span class="badge badge-primary">Ordered</span></td>-->
 <!--                                <td>January 22</td>-->
-<!--                                <td class="color-primary" style="text-align: center;">$10</td>-->
+<!--                                <td class="color-primary" style="text-align: center;">￥10</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">2</th>-->
 <!--                                <td>BILLIARD - 2</td>-->
 <!--                                <td><span class="badge badge-danger">Using</span></td>-->
 <!--                                <td>January 24</td>-->
-<!--                                <td class="color-danger" style="text-align: center;">$10</td>-->
+<!--                                <td class="color-danger" style="text-align: center;">￥10</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">3</th>-->
 <!--                                <td>BILLIARD - 3</td>-->
 <!--                                <td><span class="badge badge-primary">Ordered</span></td>-->
 <!--                                <td>January 20</td>-->
-<!--                                <td class="color-primary" style="text-align: center;">$10</td>-->
+<!--                                <td class="color-primary" style="text-align: center;">￥10</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">4</th>-->
 <!--                                <td>BILLIARD - 4</td>-->
 <!--                                <td><span class="badge badge-success">Free</span></td>-->
 <!--                                <td>January 30</td>-->
-<!--                                <td class="color-success" style="text-align: center;">$10</td>-->
+<!--                                <td class="color-success" style="text-align: center;">￥10</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">5</th>-->
 <!--                                <td>BILLIARD - 5</td>-->
 <!--                                <td><span class="badge badge-success">Free</span></td>-->
 <!--                                <td>January 31</td>-->
-<!--                                <td class="color-success" style="text-align: center;">$10</td>-->
+<!--                                <td class="color-success" style="text-align: center;">￥10</td>-->
 <!--                            </tr>-->
 <!--                            <tr>-->
 <!--                                <th scope="row">6</th>-->
 <!--                                <td>BILLIARD - 6</td>-->
 <!--                                <td><span class="badge badge-danger">Using</span></td>-->
 <!--                                <td>January 25</td>-->
-<!--                                <td class="color-danger" style="text-align: center;">$10</td>-->
+<!--                                <td class="color-danger" style="text-align: center;">￥10</td>-->
 <!--                            </tr>-->
                         </tbody>
                     </table>

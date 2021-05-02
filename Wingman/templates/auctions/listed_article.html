@@ -1,69 +1,422 @@
-{% extends "auctions/layout.html" %}
+{% extends "./layout.html" %}
 {% load static %}
 {% block script %}
 <script src='../../static/assets/js/my_script.js'></script>
 {% endblock %}
 
-{% block body %}
-<h2 style="display: inline-block">Listing: {{article.title}} </h2>
+{% block item_detail %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="col-lg-12 card" >
+            <div class="col-lg-6" >
+                <div class="card" align="center">
+                    <div class="shopping-card m-l-30">
 
-<p>
-    {{article.description}}
-    <br>
-    <img style="display: block; margin-left: auto; margin-right: auto; width: 40%;" src="{{article.article_image}}">
-    {% if article.article_image == "" %}
-    <img style="display: block; margin-left: auto; margin-right: auto; width: 40%;" src="media/{{article.image}}">
-    {% endif %}
-    <ul>
-        <li>
-            Listed by:
-            {% if article.owner.pk != request.user.pk %}
-            {{article.owner.username}}
-            {% else%}
-            me
+                        {% if article.article_image != "" %}
+
+                        <img class="img-responsive" src="{{article.article_image}}" alt="" style="width:80%;">
+
+                        {% else %}
+                        <img class="img-responsive" src="media/{{article.image}}" alt="" >
+                        {% endif%}
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-6">
+                <div class="card" >
+                    <div class="shopping-card-text m-b-20">
+                        <h1>{{article.title}}</h1>
+                    </div>
+                    <div class="shopping-card-text m-t-20" style="height:80px;">
+                        {% if user.is_authenticated %}
+                        {% if article.owner.pk != request.user.pk %}
+                        {% if article.id not in auctions_ids_in_watch_list %}
+                        <form action="{% url 'watch_list' %}" method="post">
+                            {% csrf_token %}
+                            <span class="h4 m-r-150"><i>Description: </i></span>
+                            <span><input type="hidden" name="article_id" value="{{article.pk}}"></span>
+                            <span><input class="btn btn-default" type="submit" value="Add to WatchList" style="height:40px;font-size:15px;"></span>
+                        </form>
+                        {% else%}
+                        <form action="{% url 'watch_list' %}" method="post">
+                            {% csrf_token %}
+                            <span class="h4 m-r-150"><i>Description: </i></span>
+                            <span><input type="hidden" name="article_id" value="{{article.pk}}"></span>
+                            <span><input class="btn btn-warning" type="submit" value="Remove from WatchList" style="height:40px;font-size:15px;"></span>
+                        </form>
+                        {% endif %}
+
+                        {% endif %}
+                        <span class="h4 m-r-150"><i> </i></span>
+                        {% endif %}
+                        <h4>{{article.description}}<p><br></p></h4>
+                    </div>
+                    <div class="shopping-card-text m-t-20 m-b-40" >
+                        <h4><span><i class="m-r-10">Category: </i>{{article.category}}</span></h4>
+                    </div>
+                    <div class="shopping-card-text m-t-40" style="font-size:20px;">
+                        {% if user.is_authenticated %}
+                        {% if article.owner.pk != request.user.pk %}
+                            <span class="m-r-40"><i>Owner: </i></span>
+                            <a href="#" ><img class="avatar-img" style="width:40px;" src="{{article.owner.avatar}}" alt="" /> <span class="user-avatar m-r-20" style="font-size:20px;"> {{article.owner}}</span></a>
+                        {% else%}
+                            <span class="m-r-40"><i>Owner: </i></span>
+                            <a href="#" ><img class="avatar-img" style="width:40px;" src="{{article.owner.avatar}}" alt="" /> <span class="user-avatar m-r-20" style="font-size:20px;"> ME </span></a>
+                        {% endif %}
+                        {% endif %}
+
+                    </div>
+                    <div class="shopping-card-text m-t-20" style="font-size:30px; color:blue;">
+                        <span class="m-r-10"><i>Current Highest Price: </i></span>
+                        <span>{{article.current_highest_price}}</span>
+                    </div>
+                    <div class="shopping-card-text m-t-20 m-b-20" style="font-size:30px; color:red;">
+                        <span class="m-r-150"><i>Initial Price: </i></span>
+                        <span class="m-l-20">{{article.initial_price}}</span>
+                    </div>
+                    {% if user.is_authenticated %}
+                        {% if article.owner.pk != request.user.pk %}
+                        {% if article.active %}
+                        <div class="shopping-card-text ">
+                            <form name="form_bid" action="{% url 'listed_article' article.id %}" method="post"
+                              onsubmit="return {% if last_bid %}validate_bid({{last_bid.price}}, false){%else%}validate_bid({{article.initial_price}}, true){%endif%}">
+                            {% csrf_token %}
+                                <div class="form-group">
+                                <span class="m-r-50"><input style="border:solid 1px #827d7d;width:300px; height:50px; border-radius: 5px; font-size:18px;" type="number" max="999999.9" name="new_bid" placeholder="Place your Bid"></span>
+                                <span><input class="btn btn-primary" type="submit" style="width:120px; height:50px; font-size:18px;" value="Place Bid" onclick=""></span>
+                                </div>
+                            </form>
+                        </div>
+                        {% else %}
+                            <div class="shopping-card-text ">
+                            <form name="form_bid" action="{% url 'listed_article' article.id %}" method="post"
+                              onsubmit="return {% if last_bid %}validate_bid({{last_bid.price}}, false){%else%}validate_bid({{article.initial_price}}, true){%endif%}">
+                            {% csrf_token %}
+                                <div class="form-group">
+                                <span class="m-r-50"><input style="border:solid 1px #827d7d;width:300px; height:50px; border-radius: 5px; font-size:18px;" type="number" max="999999.9" name="new_bid" placeholder="Place your Bid" disabled="disabled"></span>
+                                <span><input class="btn btn-primary" type="submit" style="width:120px; height:50px; font-size:18px;" value="Place Bid" onclick="" disabled="disabled"></span>
+                                </div>
+                            </form>
+                        </div>
+                        {% endif %}
+                        {% else %}
+                            <div class="row">
+                                <div class="col-lg-6" style="width:300px;">
+                            {% if not bids %}
+                                <form action="{% url 'edit_auction' article.id %}" method="post">
+                                    {% csrf_token %}
+
+                                    <span><input class="form-control" type="hidden" name="article_id" value="{{article.pk}}"></span>
+                                    <span><input class="btn btn-primary" type="submit" value="Edit Auction" style="width:200px; height:50px; font-size:20px;"></span>
+                                </form>
+                            {% else %}
+                                <form action="{% url 'edit_auction' article.id %}" method="post">
+                                    {% csrf_token %}
+                                    <span><input class="form-control" type="hidden" name="article_id" value="{{article.pk}}"></span>
+                                    <span><input class="btn btn-primary" type="submit" value="Edit Auction" style="width:200px; height:50px;font-size:20px;" disabled></span>
+                                </form>
+                            {% endif %}
+                                </div>
+                                <div class="col-lg-6" style="font-size:20px; width:300px;">
+                           {% if article.active %}
+                                <form action="{% url 'deactive_auction'%}" method="post">
+                                    {% csrf_token %}
+                                    <span><input class="form-control" type="hidden" name="article_id" value="{{article.pk}}"></span>
+                                    <span><input class="btn btn-danger" type="submit" value="Close Bid" style="width:200px; height:50px;font-size:20px;"></span>
+                                </form>
+                            {% else %}
+                                    {% if article.final_buyer %}
+                                    <form action="{% url 'active_auction'%}" method="post">
+                                    {% csrf_token %}
+                                    <span><input class="form-control" type="hidden" name="article_id" value="{{article.pk}}"></span>
+                                    <span><input class="btn btn-warning" type="submit" value="Open Bid" disabled="disabled" style="width:200px; height:50px;font-size:20px;"></span>
+                                    </form>
+                                    {% else%}
+                                    <form action="{% url 'active_auction'%}" method="post">
+                                        {% csrf_token %}
+                                        <span><input class="form-control" type="hidden" name="article_id" value="{{article.pk}}"></span>
+                                        <span><input class="btn btn-warning" type="submit" value="Open Bid" style="width:200px; height:50px;font-size:20px;"></span>
+                                    </form>
+                                    {% endif %}
+                            {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6" >
+        <div class="card alert">
+            <div class="card-header">
+                <h4>
+                    <span class="m-r-58">Bid List</span>
+                    <span>
+                        {% if bids_counts == 0 %}
+                        No bid so far.
+                        {% elif bids_counts == 1 %}
+                        1 bid so far.
+                        {% else %}
+                        {{bids_counts}} bids so far.
+                        {% endif %}
+                    </span>
+                </h4>
+
+<!--                <div class="card-header-right-icon">-->
+<!--                    <ul>-->
+<!--                        <li class="card-close" data-dismiss="alert"><i class="ti-close"></i></li>-->
+<!--                        <li class="card-option drop-menu"><i class="ti-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="link"></i>-->
+<!--                            <ul class="card-option-dropdown dropdown-menu">-->
+<!--                                <li><a href="#"><i class="ti-loop"></i> Update data</a></li>-->
+<!--                                <li><a href="#"><i class="ti-menu-alt"></i> Detail log</a></li>-->
+<!--                                <li><a href="#"><i class="ti-pulse"></i> Statistics</a></li>-->
+<!--                                <li><a href="#"><i class="ti-power-off"></i> Clear ist</a></li>-->
+<!--                            </ul>-->
+<!--                        </li>-->
+
+<!--                    </ul>-->
+<!--                </div>-->
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table" >
+                        <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Name</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% if bids_counts == 0 %}
+                        <tr>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td style="text-align:center;">--</td>
+                        </tr>
+
+                        {% else %}
+                            {% for bid in bids %}
+                            <tr>
+                                <td><img class="avatar-image" src="media/{{bid.user.avatar}}" style="height:50px;width:50px;"></td>
+                                <td>{{bid.user.username}}</td>
+                                <td>{{article.title}}</td>
+                                <td>{{bid.price}}</td>
+
+                                {% if article.owner.pk != request.user.pk %}
+
+                                {% if bid.price == article.current_highest_price %}
+                                <td style="text-align:center;"><span class="badge badge-success">Highest</span></td>
+                                {% elif article.final_buyer %}
+                                <td style="text-align:center;"><span class="badge badge-danger">Sold</span></td>
+                                {% else %}
+                                <td style="text-align:center;"><span class="badge badge-primary">Bid</span></td>
+                                {% endif %}
+
+                                {% elif article.final_buyer %}
+                                {% if bid.price == article.current_highest_price %}
+                                <td style="text-align:center;"><span class="badge badge-success">Highest</span></td>
+                                {% elif article.final_buyer %}
+                                <td style="text-align:center;"><span class="badge badge-danger">Sold</span></td>
+                                {% else %}
+                                <td style="text-align:center;"><span class="badge badge-primary">Bid</span></td>
+                                {% endif %}
+
+                                {% else %}
+                                <form action="{% url 'close_auction' bid.id %}" method="post">
+                                {% csrf_token %}
+
+                                {% if bid.price == article.current_highest_price %}
+                                <span><input class="form-control" type="hidden" name="article_id" value="{{article.pk}}"></span>
+                                <td style="text-align:center;"><input class="btn btn-success" style="height:30px; width:80px;" type="submit" value="Highest"></td>
+                                {% else %}
+                                <span><input class="form-control" type="hidden" name="article_id" value="{{article.pk}}"></span>
+                                <td style="text-align:center;"><input class="btn btn-warning" style="height:30px;" type="submit" value="Bid"></td>
+                                {% endif %}
+                                </form>
+
+                                {% endif %}
+
+
+                            </tr>
+                            {% endfor %}
+
+                        {% endif %}
+
+<!--                        <tr>-->
+<!--                            <td>-->
+<!--                                <div class="round-img">-->
+<!--                                    <a href=""><img class="w-35" src="assets/images/avatar/1.jpg" alt=""></a>-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                            <td>&#45;&#45;</td>-->
+<!--                            <td><span>Dell-985</span></td>-->
+<!--                            <td><span>456 pcs</span></td>-->
+<!--                            <td><span class="badge badge-success">Done</span></td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>-->
+<!--                                <div class="round-img">-->
+<!--                                    <a href=""><img class="w-35" src="assets/images/avatar/1.jpg" alt=""></a>-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                            <td>Lew Shawon</td>-->
+<!--                            <td><span>Asus-565</span></td>-->
+<!--                            <td><span>456 pcs</span></td>-->
+<!--                            <td><span class="badge badge-warning">Pending</span></td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>-->
+<!--                                <div class="round-img">-->
+<!--                                    <a href=""><img class="w-35" src="assets/images/avatar/1.jpg" alt=""></a>-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                            <td>lew Shawon</td>-->
+<!--                            <td><span>Dell-985</span></td>-->
+<!--                            <td><span>456 pcs</span></td>-->
+<!--                            <td><span class="badge badge-success">Done</span></td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>-->
+<!--                                <div class="round-img">-->
+<!--                                    <a href=""><img class="w-35" src="assets/images/avatar/1.jpg" alt=""></a>-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                            <td>lew Shawon</td>-->
+<!--                            <td><span>Dell-985</span></td>-->
+<!--                            <td><span>456 pcs</span></td>-->
+<!--                            <td><span class="badge badge-success">Done</span></td>-->
+<!--                        </tr>-->
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card alert">
+            <div class="card-header">
+                <h4>Recent Comments </h4>
+            </div>
+            <div class="recent-comment">
+                {% for comment in comments %}
+                <div class="media">
+                    <div class="media-left">
+                        <a href="#"><img class="media-object" src="media/{{comment.user.avatar}}" alt="..." style="width:50px;"></a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">{{comment.user.username}}</h4>
+                        <p>{{comment.text}}</p>
+                        <div class="comment-action">
+                            <div class="badge badge-success">Approved</div>
+                            <span class="m-l-10">
+                                <a href="#"><i class="ti-check color-success"></i></a>
+                                <a href="#"><i class="ti-close color-danger"></i></a>
+                                <a href="#"><i class="fa fa-reply color-primary"></i></a>
+                            </span>
+                        </div>
+                        <p class="comment-date">{{comment.created}}</p>
+                    </div>
+                </div>
+
+            {% endfor %}
+             <br>
+            {% if user.is_authenticated and article.active %}
+                <form action="{% url 'make_comment' article.id %}" method="post">
+                    {% csrf_token %}
+                    <textarea class="form-control m-b-20" id="comment-body" placeholder="Write comment here.." name="comment_text"></textarea>
+                    <input class="btn btn-warning btn-md" type="submit" value="Add Comment">
+                </form>
             {% endif %}
-        </li>
-        <li> Category: {{article.category.name}}</li>
-    </ul>
+            </div>
+        </div>
+        <!-- /# card -->
+    </div>
+</div>
 
-    <h3>
-        Your bid should not be lower than RMB
-        {{article.initial_price}}
-    </h3>
+{% endblock %}
 
-<p>
-    {% if bids_count == 0 %}
-    No bids so far.
-    {% else %}
-    {{bids_counts}} bids so far.
-    {% for bid in bids %}
-    <div class="bid_user">
-<p><a style="font-size:250%;font-weight:400">RMB<span style="color:coral"> {{bid.price}}</span></a> made by <strong>{{bid.user}}</strong> at {{bid.created}}</p></div>
-            {% if article.owner.pk == request.user.pk and article.active %}
-<form action="{% url 'close_auction' bid.pk %}" method="post">
-    {% csrf_token %}
-    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-    <input class="btn btn-primary" type="submit" value="Sale it to {{bid.user}}">
-</form>
+<!--<div class="col-lg-6" style="margin-left:0px">-->
+<!--    <div class="card">-->
+<!--<h3 style="display: inline-block">{{article.title}} </h3>-->
+
+<!--<p>-->
+<!--    <br>-->
+<!--    <img style="display: block; margin-left: auto; margin-right: auto; width: 40%;" src="{{article.article_image}}">-->
+<!--    {% if article.article_image == "" %}-->
+<!--    <img style="display: block; margin-left: auto; margin-right: auto; width: 40%;" src="media/{{article.image}}">-->
+<!--    {% endif %}-->
+
+
+<!--    <p>-->
+<!--        Your bid should not be lower than-->
+<!--    <a style="font-size:250%;font-weight:400">RMB<span style="color:coral">  {{article.initial_price}}</span></a>.-->
+<!--    </p>-->
+<!--</div>-->
+<!--</div>-->
+<!--<p>-->
+<!--<div class="col-lg-6">-->
+<!--<div class="card">-->
+<!--            {{article.description}}-->
+<!--</div>-->
+<!--</div>-->
+<!--    <p style="padding-left:10px;">    <ul>-->
+<!--        <li>-->
+
+<!--            Listed by:-->
+<!--            {% if article.owner.pk != request.user.pk %}-->
+<!--            {{article.owner.username}}-->
+<!--            {% else%}-->
+<!--            me-->
+<!--            {% endif %}-->
+<!--        </li>-->
+<!--        <li> Category: {{article.category.name}}</li>-->
+<!--    </ul></p>-->
+<!--    {% if bids_count == 0 %}-->
+<!--    No bids so far.-->
+<!--    {% else %}-->
+<!--    {{bids_counts}} bids so far.-->
+<!--    {% for bid in bids %}-->
+<!--    <div class="bid_user">-->
+<!--<p><a style="font-size:250%;font-weight:400">RMB<span style="color:coral"> {{bid.price}}</span></a> made by <strong>{{bid.user}}</strong> at {{bid.created}}</p></div>-->
+<!--            {% if article.owner.pk == request.user.pk and article.active %}-->
+<!--<form action="{% url 'close_auction' bid.pk %}" method="post">-->
+<!--    {% csrf_token %}-->
+<!--    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">-->
+<!--    <input class="btn btn-primary" type="submit" value="Sale it to {{bid.user}}">-->
+<!--</form>-->
 
 <!--{%endif%}-->
 
 <!--{%endfor %}-->
 
-    {% if user.is_authenticated %}
-    {% if article.active %}
-    {% if article.owner.pk != request.user.pk %}
-<form name="form_bid" action="{% url 'listed_article' article.id %}" method="post"
-      onsubmit="return {% if last_bid %}validate_bid({{last_bid.price}}, false){%else%}validate_bid({{article.initial_price}}, true){%endif%}">
-    {% csrf_token %}
-    <div class="form-group">
-        <input class="form-control" type="number" name="new_bid" placeholder="Place your Bid">
-        <!--<p id="demo"></p>-->
-    </div>
-    <input class="btn btn-primary" type="submit" value="Place Bid"
-           onclick="">
-</form>
-    {% else %}
+<!--    {% if user.is_authenticated %}-->
+<!--    {% if article.active %}-->
+<!--    {% if article.owner.pk != request.user.pk %}-->
+<!--<form name="form_bid" action="{% url 'listed_article' article.id %}" method="post"-->
+<!--      onsubmit="return {% if last_bid %}validate_bid({{last_bid.price}}, false){%else%}validate_bid({{article.initial_price}}, true){%endif%}">-->
+<!--    {% csrf_token %}-->
+<!--    <div class="form-group">-->
+<!--        <input class="form-control" type="number" max="100000000" name="new_bid" placeholder="Place your Bid">-->
+<!--        &lt;!&ndash;<p id="demo"></p>&ndash;&gt;-->
+<!--    </div>-->
+<!--    <input class="btn btn-primary" type="submit" value="Place Bid"-->
+<!--           onclick="">-->
+<!--</form>-->
+<!--    {% else %}-->
 
 <!--    {% if not last_bid %}-->
 <!--<form action="{% url 'edit_auction' article.id %}" method="post">-->
@@ -95,24 +448,22 @@
 <!--</p>-->
 <!--        {% endif %}-->
 
-<br>
 
-        {% if article.owner != request.user and article.active %}
-<p>123: {{auctions_ids_in_watch_list}}</p>
-            {% if article.id not in auctions_ids_in_watch_list %}
-<form action="{% url 'watch_list' %}" method="post">
-    {% csrf_token %}
-    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-    <input class="btn btn-secondary btn-sm" type="submit" value="Add to WatchList">
-</form>
-            {%else%}
-<form action="{% url 'watch_list' %}" method="post">
-    {% csrf_token %}
-    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">
-    <input class="btn btn-secondary btn-sm" type="submit" value="Remove from WatchList">
-</form>
-            {%endif%}
-        {%endif%}
+<!--        {% if article.owner != request.user and article.active %}-->
+<!--            {% if article.id not in auctions_ids_in_watch_list %}-->
+<!--<form action="{% url 'watch_list' %}" method="post">-->
+<!--    {% csrf_token %}-->
+<!--    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">-->
+<!--    <input class="btn btn-secondary btn-sm" type="submit" value="Add to WatchList">-->
+<!--</form>-->
+<!--            {%else%}-->
+<!--<form action="{% url 'watch_list' %}" method="post">-->
+<!--    {% csrf_token %}-->
+<!--    <input class="form-control" type="hidden" name="article_id" value="{{article.pk}}">-->
+<!--    <input class="btn btn-secondary btn-sm" type="submit" value="Remove from WatchList">-->
+<!--</form>-->
+<!--            {%endif%}-->
+<!--        {%endif%}-->
 
 <!--    {% endif %}-->
 
@@ -142,4 +493,3 @@
 <!--    {% endif %}-->
 
 
-{% endblock %}

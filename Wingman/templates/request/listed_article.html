@@ -1,6 +1,140 @@
 {% extends "./layout.html" %}
 {% load static %}
 
+{% block item_detail %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="col-lg-12 card" >
+            <div class="col-lg-6">
+                <div class="card" >
+                    <div class="shopping-card-text m-b-20">
+                        <h1>{{request.title}}</h1>
+                    </div>
+                    <div class="shopping-card-text m-t-20" style="height:80px;">
+                        {% if user.is_authenticated %}
+                        {% if article.owner.pk != request.user.pk %}
+                        {% if article.id not in auctions_ids_in_watch_list %}
+                        <form action="{% url 'watch_request' %}" method="post">
+                            {% csrf_token %}
+                            <span class="h4 m-r-150"><i>Description: </i></span>
+                            <span><input type="hidden" name="article_id" value="{{request.pk}}"></span>
+                            <span><input class="btn btn-default" type="submit" value="Add to WatchList" style="height:40px;font-size:15px;"></span>
+                        </form>
+                        {% else%}
+                        <form action="{% url 'watch_request' %}" method="post">
+                            {% csrf_token %}
+                            <span class="h4 m-r-150"><i>Description: </i></span>
+                            <span><input type="hidden" name="article_id" value="{{request.pk}}"></span>
+                            <span><input class="btn btn-warning" type="submit" value="Remove from WatchList" style="height:40px;font-size:15px;"></span>
+                        </form>
+                        {% endif %}
+
+                        {% endif %}
+                        <span class="h4 m-r-150"><i> </i></span>
+                        {% endif %}
+                        <h4>{{request.description}}<p><br></p></h4>
+                    </div>
+                    <div class="shopping-card-text m-t-20 m-b-40" >
+                        <h4><span><i class="m-r-10">Category: </i>{{article.category}}</span></h4>
+                    </div>
+                    <div class="shopping-card-text m-t-40" style="font-size:20px;">
+                        {% if user.is_authenticated %}
+                        {% if article.owner.pk != request.user.pk %}
+                            <span class="m-r-40"><i>Owner: </i></span>
+                            <a href="#" ><img class="avatar-img" style="width:40px;" src="{{article.owner.avatar}}" alt="" /> <span class="user-avatar m-r-20" style="font-size:20px;"> {{article.owner}}</span></a>
+                        {% else%}
+                            <span class="m-r-40"><i>Owner: </i></span>
+                            <a href="#" ><img class="avatar-img" style="width:40px;" src="{{article.owner.avatar}}" alt="" /> <span class="user-avatar m-r-20" style="font-size:20px;"> ME </span></a>
+                        {% endif %}
+                        {% endif %}
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6" >
+        <div class="card alert">
+            <div class="card-header">
+<!--                <h4>-->
+<!--                    <span class="m-r-58">Bid List</span>-->
+<!--                    <span>-->
+<!--                        {% if bids_counts == 0 %}-->
+<!--                        No bid so far.-->
+<!--                        {% elif bids_counts == 1 %}-->
+<!--                        1 bid so far.-->
+<!--                        {% else %}-->
+<!--                        {{bids_counts}} bids so far.-->
+<!--                        {% endif %}-->
+<!--                    </span>-->
+<!--                </h4>-->
+
+<!--                <div class="card-header-right-icon">-->
+<!--                    <ul>-->
+<!--                        <li class="card-close" data-dismiss="alert"><i class="ti-close"></i></li>-->
+<!--                        <li class="card-option drop-menu"><i class="ti-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="link"></i>-->
+<!--                            <ul class="card-option-dropdown dropdown-menu">-->
+<!--                                <li><a href="#"><i class="ti-loop"></i> Update data</a></li>-->
+<!--                                <li><a href="#"><i class="ti-menu-alt"></i> Detail log</a></li>-->
+<!--                                <li><a href="#"><i class="ti-pulse"></i> Statistics</a></li>-->
+<!--                                <li><a href="#"><i class="ti-power-off"></i> Clear ist</a></li>-->
+<!--                            </ul>-->
+<!--                        </li>-->
+
+<!--                    </ul>-->
+<!--                </div>-->
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card alert">
+            <div class="card-header">
+                <h4>Recent Comments </h4>
+            </div>
+            <div class="recent-comment">
+                {% for comment in comments %}
+                <div class="media">
+                    <div class="media-left">
+                        <a href="#"><img class="media-object" src="media/{{comment.user.avatar}}" alt="..." style="width:50px;"></a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">{{comment.user.username}}</h4>
+                        <p>{{comment.text}}</p>
+                        <div class="comment-action">
+                            <div class="badge badge-success">Approved</div>
+                            <span class="m-l-10">
+                                <a href="#"><i class="ti-check color-success"></i></a>
+                                <a href="#"><i class="ti-close color-danger"></i></a>
+                                <a href="#"><i class="fa fa-reply color-primary"></i></a>
+                            </span>
+                        </div>
+                        <p class="comment-date">{{comment.created}}</p>
+                    </div>
+                </div>
+
+            {% endfor %}
+             <br>
+                            {% if user.is_authenticated  %}
+                <form action="{% url 'make_comment' request.id %}" method="post">
+                    {% csrf_token %}
+                    <textarea class="form-control m-b-20" id="comment-body" placeholder="Write comment here.." name="comment_text"></textarea>
+                    <input class="btn btn-warning btn-md" type="submit" value="Add Comment">
+                </form>
+            {% endif %}
+            </div>
+        </div>
+        <!-- /# card -->
+    </div>
+</div>
+
+{% endblock %}
+
+
 {% block body %}
     <h2 style="display: inline-block">Listing: {{request.title}} </h2>
 
