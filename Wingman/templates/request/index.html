@@ -1,4 +1,22 @@
-{% extends "./layout.html" %}
+{% extends "../index.html" %}
+
+{% block request_item %}
+    {% for request in requests %}
+    <div style="clear: left; float:none; margin-bottom:150px;">
+
+        <div>
+            <p>
+                <span style="font-weight: bold">
+                    <a href="{% url 'listed_request' request.pk %}">{{request.title}}</a>
+                </span>
+
+        </div>
+    </div>
+
+    {% empty %}
+        <p>There is no active listing</p>
+    {% endfor %}
+{% endblock %}
 
 {% block body %}
 

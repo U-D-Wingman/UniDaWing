@@ -1,42 +1,98 @@
-{% extends "auctions/layout.html" %}
+{% extends "./layout.html" %}
 
-{% block body %}
-    <h2>{{title}}</h2>
-
+{% block trade_item %}
+<div class="row">
     {% for auction in auctions %}
-    <div style="clear: left; float:none; margin-bottom:150px;">
-        {% if auction.article_image != "" %}
-        <img style="float:left; margin-right:60px" src="{{auction.article_image}}" width="200" height="200">
-        {% else %}
-        <img style="float:left; margin-right:60px" src="media/{{auction.image}}" width="200" height="200">
-        {% endif%}
-        <div>
-            <p>
-                <span style="font-weight: bold">
-                    <a href="{% url 'listed_article' auction.pk %}">{{auction.title}}</a>
-                </span>
-                <br>
-                <span style="font-weight: bold">Price:</span>RMB
-                {% if auction.last_bid %}
-                {{auction.last_bid.price}}
-                {%else%}
-                {{auction.initial_price}}
-                {% endif %}
-                <br>
-                {{auction.description}}
-            </p>
+    <div class="col-lg-4">
+        <div class="col-lg-12">
+            <div class="card" >
+            <div class="shopping-card" align="center" style="height:50%;">
+                {% if auction.article_image != "" %}
 
+                <img class="img-responsive" src="{{auction.article_image}}" alt="" style="width:250px;height:150px;" >
+
+                {% else %}
+                <img class="img-responsive" src="media/{{auction.image}}" alt="" style="width:250px;height:150px;">
+                {% endif%}
+            </div>
+            <div class="shopping-card-text text-center">
+                <h4>{{auction.title}}</h4>
+<!--                <p>{{auction.description}}</p>-->
+            </div>
+            <div class="text-center p-t-20 p-b-10">
+                <span class="p-10 color-danger f-w-400" style="color:blue;">
+                <span class="m-r-3">Highest:</span>{{auction.current_highest_price}}
+            </span>|
+            <span class="p-10 color-danger f-w-400" style="color:red;">
+                <span class="m-r-3">Initial:</span>{{auction.initial_price}}
+            </span>|
             {% if auction.final_buyer%}
-            <p style="color:red">Sold to: {{auction.final_buyer.username}} </p>
+                <span class="badge badge-warning m-l-10">Sold</span>
+            {% elif not auction.active %}
+                <span class="badge badge-danger m-l-10">Closed</span>
+            {% else %}
+                <span class="badge badge-primary m-l-10">Sale</span>
             {%endif%}
+            </div>
+            <div class="text-center p-t-20 p-b-20">
+                <a href="{% url 'listed_article' auction.pk %}" class="btn btn-primary bg-primary btn-outline">More Detail</a>
 
+            </div>
         </div>
+        </div>
+
     </div>
 
 
+
+
+
+    {% empty %}
+<!--        <p>There is no active listing</p>-->
+    {% endfor %}
+</div>
+{% endblock %}
+
+
+{% block body %}
+<h2>{{title}}</h2>
+
+    {% for auction in auctions %}
+<div style="clear: left; float:none; margin-bottom:150px;">
+    {% if auction.article_image != "" %}
+    <img style="float:left; margin-right:60px" src="{{auction.article_image}}" width="200" height="200">
+    {% else %}
+    <img style="float:left; margin-right:60px" src="media/{{auction.image}}" width="200" height="200">
+    {% endif%}
+    <div>
+        <p>
+            <span style="font-weight: bold">
+                <a href="{% url 'listed_article' auction.pk %}">{{auction.title}}</a>
+            </span>
+            <br>
+            <span style="font-weight: bold">Initial Price:</span>RMB
+            {{auction.initial_price}}
+            <br>
+            <span style="font-weight: bold">Current Highest Price:</span>RMB
+            {{auction.current_highest_price}}
+            <br>
+
+            {{auction.description}}
+        </p>
+
+        {% if auction.final_buyer%}
+        <p style="color:red">Sold to: {{auction.final_buyer.username}} </p>
+        {%endif%}
+
+    </div>
+</div>
 
     {% empty %}
         <p>There is no active listing</p>
     {% endfor %}
 
+{% endblock %}
+
+{% block 123 %}
+    <span>hello</span>
 {% endblock %}

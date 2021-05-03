@@ -6,7 +6,10 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    first_name=models.CharField(max_length=64,null=True,blank=True)
+    last_name=models.CharField(max_length=64,null=True,blank=True)
+    avatar=models.ImageField(default="media/default.png",upload_to="")
+    university=models.CharField(max_length=64,null=True,blank=True)
 
 class Category(models.Model):
     name = models.CharField(max_length=64)
@@ -24,6 +27,7 @@ class Auction(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
     initial_price = models.FloatField()
+    current_highest_price=models.FloatField(default=0)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="my_actions")
     final_buyer = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True,
                                     related_name="bought_actions")
@@ -77,6 +81,7 @@ class AucPic(models.Model):
 
 class SportField(models.Model):
     name=models.CharField(max_length=64)
+    sub_id=models.IntegerField(default=0)
     type=models.ForeignKey(Sport_Cat,on_delete=models.CASCADE,related_name="sportfield")
     price=models.FloatField()
     active=models.BooleanField()
@@ -85,9 +90,16 @@ class SportField(models.Model):
 
 class Appointment(models.Model):
     founder=models.ForeignKey(User, on_delete=models.CASCADE, related_name="appointment")
+    field=models.ForeignKey(SportField,on_delete=models.CASCADE, related_name="appointment",null=True, blank=True)
     description=models.TextField()
-    bringup_time=models.DateTimeField(auto_now_add=True)
+    bringup_time=models.DateTimeField(null=True, blank=True)
+    duration=models.IntegerField(default=1)
+    end_time=models.DateTimeField(null=True, blank=True)
     active=models.BooleanField()
+    def __str__(self):
+        return f"name:{self.founder}, " \
+               f"field: {self.field}, " \
+               f"end at:{self.end_time}, "
 
 class Del_Corp(models.Model):
     name=models.CharField(max_length=8)
@@ -104,6 +116,16 @@ class Delivery(models.Model):
         return f"Corp:{self.corporatiion}, " \
                f"receiver: {self.receiver}, " \
                f"active:{self.active}"
+
+class Chatting(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="chats")
+    text = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"user:{self.user.username}, " \
+               f"comment: {self.text} "\
+               f"time: {self.created} "
 
 # ####################################################################
 # """

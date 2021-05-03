@@ -1,0 +1,37 @@
+{% extends "./layout.html" %}
+
+{% block chat %}
+<ul class="list-group">
+    {% for chat in chats %}
+    <div class="list-group-item list-group-item-action flex-column align-items-start" style="height:150%;">
+        <div class="d-flex w-100 justify-content-between" style="text-align:right;height:10px;"><small class="text-muted">{{chat.created}}</small>
+        </div>
+        <div><h6 class="mb-1" style="color:blue">User: {{chat.user.username}}</h6><img src="{{chat.user.avatar}}"><p class="mb-1">{{chat.text}}            </p>
+        </div>
+    </div>
+
+    {% endfor %}
+</ul>
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'chats' %}" method="POST">
+        {% csrf_token %}
+        <textarea class="form-control" style="height:100px;" id="comment-body" placeholder="Write your opinions here.." , name="chat_text"></textarea>
+<!--                    <div class="basic-form">-->
+<!--                        <div class="form-group">-->
+<!--                            <label>Category</label>-->
+<!--                            <select class="form-control bg-ash border-none" style="height:20px;" name="category">-->
+<!--                                {% for c in chatcats %}-->
+<!--                                <option value="{{c.id}}">{{c.name}}</option>-->
+<!--                                {%endfor%}-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                    </div>-->
+        <span class="m-r-10"><input class="btn btn-warning btn-md m-t-10" type="submit" value="Add Chat"></span>
+
+    </form>
+
+    {% endif %}
+
+
+{% endblock %}

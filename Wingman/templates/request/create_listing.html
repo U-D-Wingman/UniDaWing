@@ -1,5 +1,149 @@
 {% extends "./layout.html" %}
 
+{% block create_item %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card alert">
+                <div class="card-header pr">
+                    <h4>Create A New Item</h4>
+                </div>
+
+
+                <form action="{% url 'create_request' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="basic-form m-t-20">
+                        <div class="form-group">
+                            <label>Request Name</label>
+                            <input type="text" autofocus class="form-control border-none input-flat bg-ash" name="title" placeholder="">
+                        </div>
+                    </div>
+                    <div class="basic-form m-t-20">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input type="text" class="form-control border-none input-flat bg-ash" maxlength="255" name="description" placeholder="">
+                        </div>
+                    </div>
+
+                    <div class="basic-form">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select class="form-control bg-ash border-none" name="category">
+                                {% for c in categories %}
+                                <option value="{{c.id}}">{{c.name}}</option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                    </div>
+
+<!--                    <div class="basic-form m-t-20">-->
+<!--                        <div class="form-group">-->
+<!--                            <label>Least Need People: </label>-->
+<!--                            <input type="number" class="form-control border-none input-flat bg-ash" min="0" max="999999.9" placeholder="" name="initial_price">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                        <label>Web Image</label>-->
+<!--                        <input class="form-control border-none input-flat bg-ash" type="url" name="article_img" placeholder="Article Image Url [OPTIONAL]">-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                        <span><i class="ti-info-alt" style="font-size:20px; color:#ff9b00;"></i><label class="m-l-10">Upload Local Image with Image Button</label></span>-->
+<!--                    </div>-->
+<!--                    <button class="btn btn-primary btn-lg m-b-10 m-l-5 sbmt-btn" type="button" style="width:100px;">Image</button>-->
+                    <input style="opacity:0.0;height:35px;width:80px;left:50px;top:600px;position:absolute;" class="btn btn-default btn-lg m-b-10 bg-primary border-none m-r-5 sbmt-btn " type="file"  value="Image" name="article_img_local"></input>
+                    <input id='field2' class="btn btn-primary btn-lg m-b-10 bg-warning border-none m-l-5 m-r-5 sbmt-btn" type="submit" style="width:100px;" value="Create"></input>
+                    <button class="btn btn-default btn-lg m-b-10 m-l-5 sbmt-btn" type="button" style="width:100px;"><a style="color:white;" href="{% url 'create_listing'%}">Reset</a></button>
+                </form>
+
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card alert">
+                <div class="card-header pr">
+                    <h4>My Joined List</h4>
+<!--                    <div class="search-action">-->
+<!--                        <div class="search-type dib">-->
+<!--                            <input class="form-control input-rounded" placeholder="Search by Hotel" type="text">-->
+<!--                        </div>-->
+<!--                        <div class="search-type dib">-->
+<!--                            <input class="form-control input-rounded" placeholder="Search by Room..." type="text">-->
+<!--                        </div>-->
+<!--                        <div class="search-type dib">-->
+<!--                            <input class="form-control input-rounded" placeholder="Search by bed" type="text">-->
+<!--                        </div>-->
+<!--                        <div class="search-type dib">-->
+<!--                            <input class="form-control input-rounded" placeholder="search" type="text">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="card-header-right-icon">-->
+<!--                        <ul>-->
+<!--                            <li class="card-close" data-dismiss="alert"><i class="ti-close"></i></li>-->
+<!--                            <li class="card-option drop-menu"><i class="ti-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="link"></i>-->
+<!--                                <ul class="card-option-dropdown dropdown-menu">-->
+<!--                                    <li><a href="#"><i class="ti-loop"></i> Update data</a></li>-->
+<!--                                    <li><a href="#"><i class="ti-menu-alt"></i> Detail log</a></li>-->
+<!--                                    <li><a href="#"><i class="ti-pulse"></i> Statistics</a></li>-->
+<!--                                    <li><a href="#"><i class="ti-power-off"></i> Clear ist</a></li>-->
+<!--                                </ul>-->
+<!--                            </li>-->
+<!--                            <li class="doc-link"><a href="#"><i class="ti-link"></i></a></li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
+                </div>
+                <div class="card-body">
+                    {{ user_exited_requests }}
+                    <div class="table-responsive">
+                        <table class="table student-data-table m-t-20">
+                            <thead>
+                                <tr>
+                                    <th><label><input type="checkbox" value=""></label>Name</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Now Joined</th>
+<!--                                    <th>Current Price</th>-->
+                                    <th>State</th>
+<!--                                    <th>Buyer</th>-->
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for item in user_existed_requests %}
+                                <tr>
+                                    {% if item.active %}
+                                    <td><label><input type="checkbox" checked="checked" disabled></label>{{item.title}}</td>
+                                    {% else %}
+                                    <td><label><input type="checkbox" value="" disabled></label>{{item.title}}</td>
+                                    {% endif %}
+                                    <td>{{item.description}}</td>
+                                    <td>
+                                        {{item.category}}
+                                    </td>
+
+                                    <td>
+                                        {{item.num_joins}}
+                                    </td>
+
+                                    {% if item.success %}
+                                    <td><span class="badge badge-success">Success</span></td>
+                                    {% elif item.active %}
+                                    <td><span class="badge badge-primary">Request</span></td>
+                                    {% else %}
+                                    <td><span class="badge badge-danger">Closed</span></td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /# column -->
+
+    </div>
+{% endblock %}
+
+
+
 {% block body %}
     <h2>Create Request Listing</h2>
 

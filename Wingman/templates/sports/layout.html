@@ -1,61 +1,541 @@
 ﻿{% load static %}
-
 <!DOCTYPE html>
-<meta charset="utf-8">
 <html lang="en">
+
 <head>
-    <title>University DailyLife Wingman - Gym system</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link href="../../static/auctions/styles.css" rel="stylesheet">
-
-    {% block script %}
-    {% endblock %}
-
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>University DailyLife Wingman</title>
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="../../static/assets/images/wingman-red-light.png">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="../../static/assets/images/wingman-red-light.png">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="../../static/assets/images/wingman-red-light.png">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="../../static/assets/images/wingman-red-light.png">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="../../static/assets/images/wingman-red-light.png">
+    <!-- Styles -->
+    <link href="../../static/assets/css/lib/chartist/chartist.min.css" rel="stylesheet">
+    <link href="../../static/assets/css/lib/font-awesome.min.css" rel="stylesheet">
+    <link href="../../static/assets/css/lib/themify-icons.css" rel="stylesheet">
+    <link href="../../static/assets/css/lib/owl.carousel.min.css" rel="stylesheet" />
+    <link href="../../static/assets/css/lib/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="../../static/assets/css/lib/weather-icons.css" rel="stylesheet" />
+    <link href="../../static/assets/css/lib/menubar/sidebar.css" rel="stylesheet">
+    <link href="../../static/assets/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/assets/css/lib/unix.css" rel="stylesheet">
+    <link href="../../static/assets/css/style.css" rel="stylesheet">
+    <link href="../../static/assets/css/my_style.css" rel="stylesheet">
 </head>
+
 <body>
-    <h1>University DailyLife Wingman - Gym system</h1>
-    <div>
-        {% if user.is_authenticated %}
-        Signed in as <strong>{{ user.username }}</strong>.
-        {% else %}
-        Not signed in.
-        {% endif %}
+    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        <div class="nano">
+            <div class="nano-content">
+                <ul>
+                    <li class="label m-t-20 m-b-10 f-s-22" style="color:#00799E;">Wingman System</li>
+                    <hr class="m-t-10 m-b-5">
+                    <li id="home"><a href="{% url 'index' %}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"><i class="ti-home"></i> Home</a></li>
+                    <li class="label">Gym</li>
+                    <li class="active" id="gym"><a href="{% url 'sportsindex' %}"><i class="ti-cup"></i> Gym </a></li>
+                    <li class="label">Trade</li>
+                    {% if user.is_authenticated %}
+                    <li class="sidebar-sub-toggle"><a class="sidebar-sub-toggle"><i class="ti-shopping-cart"></i> Trade <span class="badge badge-danger">Hot</span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="{% url 'auctionindex' %}">Active Listing</a></li>
+                            <li><a href="{% url 'create_listing' %}">Create Listing</a></li>
+                            <li><a href="{% url 'my_listing' %}">My Listing</a></li>
+                            <li><a href="{% url 'watch_list' %}">Watchlist</a></li>
+                            <li><a href="{% url 'winning_listing' %}">Winninglist</a></li>
+                            <li><a href="{% url 'categories' %}">Categories</a></li>
+
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="sidebar-sub-toggle"><a class="sidebar-sub-toggle"><i class="ti-shopping-cart"></i> Trade <span class="badge badge-danger">Hot</span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="{% url 'auctionindex' %}">Active Listing</a></li>
+                            <li><a href="{% url 'categories' %}">Categories</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    <li class="label">Request</li>
+                    {% if user.is_authenticated %}
+                    <li class="sidebar-sub-toggle"><a class="sidebar-sub-toggle"><i class="ti-check-box"></i> Request <span class="badge badge-primary">Beta</span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="{% url 'requestindex' %}">Request Listing</a></li>
+                            <li><a href="{% url 'create_request' %}">Create Listing</a></li>
+                            <li><a href="{% url 'joined_request' %}">Joined Request</a></li>
+                            <li><a href="{% url 'watch_request' %}">Watching Request</a></li>
+                            <li><a href="{% url 'successful_request' %}">Successful Request</a></li>
+                            <li><a href="{% url 'request_categories' %}">Categories</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="sidebar-sub-toggle"><a class="sidebar-sub-toggle"><i class="ti-check-box"></i> Request <span class="badge badge-primary">Beta</span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            <li><a href="{% url 'requestindex' %}">Request Listing</a></li>
+                            <li><a href="{% url 'request_categories' %}">Categories</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                    <li class="label">Delivery</li>
+                    <li id="delivery"><a href="{% url 'deliveries' %}"><i class="ti-truck"></i> Delivery </a></li>
+                    <li class="label">Chat</li>
+                    <li id="chat"><a href="{% url 'chats' %}"><i class="ti-comments-smiley"></i> Chat </a></li>
+                    <li class="label">Logout</li>
+                    <li><a href="{% url 'logout' %}"><i class="ti-close"></i> Logout</a></li>
+                    {% endif %}
+<!--                    <li class="label">Main</li>-->
+<!--                    <li class="active"><a class="sidebar-sub-toggle"><i class="ti-home"></i> Dashboard <span class="badge badge-primary">6</span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="{% url 'index' %}">Dashboard 1</a></li>-->
+<!--                            <li><a href="index-v1.html">Dashboard 2</a></li>-->
+<!--                            <li><a href="index-school.html">Dashboard 3</a></li>-->
+<!--                            <li><a href="index-ecommerce.html">Dashboard 5</a></li>-->
+<!--                            <li><a href="index-ecommerce-v2.html">Dashboard 6</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li class="label">School</li>-->
+<!--                    <li><a class="sidebar-sub-toggle"><i class="ti-pencil-alt"></i>Management <span class="badge badge-primary">28</span><span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="school-student.html">Student</a></li>-->
+<!--                            <li><a href="school-student-profile.html">Student Profile</a></li>-->
+<!--                            <li><a href="school-student-details.html">Student Detail</a></li>-->
+<!--                            <li><a href="school-hostel-room.html">Hostel</a></li>-->
+<!--                            <li><a href="school-all-student-table.html">Students Table</a></li>-->
+<!--                            <li><a href="school-student-search.html">search</a></li>-->
+<!--                            <li><a href="school-teacher-information.html">Teacher Info</a></li>-->
+<!--                            <li><a href="school-student-profile.html">Teacher Details</a></li>-->
+<!--                            <li><a href="school-all-teacher-table.html">Teacher Table</a></li>-->
+<!--                            <li><a href="school-class-information.html">Class Info</a></li>-->
+<!--                            <li><a href="school-subject.html">Subject</a></li>-->
+<!--                            <li><a href="school-class-routine.html">Routine</a></li>-->
+<!--                            <li><a href="school-attendace-sheet.html">Attendance</a></li>-->
+<!--                            <li><a href="school-grade-list.html">Exam Result</a></li>-->
+<!--                            <li><a href="school-new-exam.html">Exam Schedule</a></li>-->
+<!--                            <li><a href="school-account-setting.html">Setting</a></li>-->
+<!--                            <li><a href="school-student-fees-collection.html">Collection Fees</a></li>-->
+<!--                            <li><a href="school-payment-information.html">Payment info</a></li>-->
+<!--                            <li><a href="school-add-new-expenses.html">New Expense</a></li>-->
+<!--                            <li><a href="school-all-expense-list.html">Expense</a></li>-->
+<!--                            <li><a href="school-attendace-sheet.html">Attendance</a></li>-->
+<!--                            <li><a href="school-book-information.html">Book Info</a></li>-->
+<!--                            <li><a href="school-book-list.html">Book List</a></li>-->
+<!--                            <li><a href="school-all-parents-list.html">Parents List</a></li>-->
+<!--                            <li><a href="school-parents.html">Parents</a></li>-->
+<!--                            <li><a href="school-form.html">Form</a></li>-->
+<!--                            <li><a href="school-notice.html">Notice</a></li>-->
+<!--                            <li><a href="school-transport.html">Transport</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+
+<!--                    <li class="label">Restaurant</li>-->
+<!--                    <li><a class="sidebar-sub-toggle"><i class="ti-cup"></i> Restaurant<span class="badge badge-primary">7</span> <span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="restaurant-menu-one.html">Menu One</a></li>-->
+<!--                            <li><a href="restaurant-menu-two.html">Menu Two</a></li>-->
+<!--                            <li><a href="restaurant-menu-three.html">Menu Three</a></li>-->
+<!--                            <li><a href="restaurant-favourite-list.html">Favourite</a></li>-->
+<!--                            <li><a href="restaurant-order-list.html">Order List</a></li>-->
+<!--                            <li><a href="restaurant-booking.html">Booking</a></li>-->
+<!--                            <li><a href="restaurant-upload-menu.html">Upload Menu</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+
+<!--                    <li class="label">Apps</li>-->
+<!--                    <li><a class="sidebar-sub-toggle"><i class="ti-bar-chart-alt"></i>  Charts  <span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="chart-flot.html">Flot</a></li>-->
+<!--                            <li><a href="chart-morris.html">Morris</a></li>-->
+<!--                            <li><a href="chartjs.html">Chartjs</a></li>-->
+<!--                            <li><a href="chartist.html">Chartist</a></li>-->
+<!--                            <li><a href="chart-peity.html">Peity</a></li>-->
+<!--                            <li><a href="chart-sparkline.html">Sparkle</a></li>-->
+<!--                            <li><a href="chart-knob.html">Knob</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li><a href="app-event-calender.html"><i class="ti-calendar"></i> Calender </a></li>-->
+<!--                    <li><a href="app-email.html"><i class="ti-email"></i> Email</a></li>-->
+<!--                    <li><a href="app-profile.html"><i class="ti-user"></i> Profile</a></li>-->
+<!--                    <li><a href="app-widget-card.html"><i class="ti-layout-grid2-alt"></i> Widget</a></li>-->
+<!--                    <li class="label">Features</li>-->
+<!--                    <li><a class="sidebar-sub-toggle"><i class="ti-layout"></i> UI Elements <span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="ui-accordion.html">Accordion</a></li>-->
+<!--                            <li><a href="ui-alerts.html">Alerts</a></li>-->
+<!--                            <li><a href="ui-badges.html">Badges</a></li>-->
+<!--                            <li><a href="ui-button.html">Button</a></li>-->
+<!--                            <li><a href="ui-dropdown.html">Dropdown</a></li>-->
+<!--                            <li><a href="ui-Images.html">Images</a></li>-->
+<!--                            <li><a href="ui-list-group.html">List Group</a></li>-->
+<!--                            <li><a href="ui-panels.html">Panels</a></li>-->
+<!--                            <li><a href="ui-progressbar.html">Progressbar</a></li>-->
+<!--                            <li><a href="ui-tab.html">Tab</a></li>-->
+<!--                            <li><a href="ui-wells.html">Wells</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li><a class="sidebar-sub-toggle"><i class="ti-panel"></i> Components <span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="uc-calendar.html">Calendar</a></li>-->
+<!--                            <li><a href="uc-carousel.html">Carousel</a></li>-->
+<!--                            <li><a href="uc-weather.html">Weather</a></li>-->
+<!--                            <li><a href="uc-datamap.html">Datamap</a></li>-->
+<!--                            <li><a href="uc-todo-list.html">To do</a></li>-->
+<!--                            <li><a href="uc-scrollable.html">Scrollable</a></li>-->
+<!--                            <li><a href="uc-sweetalert.html">Sweet Alert</a></li>-->
+<!--                            <li><a href="uc-toastr.html">Toastr</a></li>-->
+<!--                            <li><a href="uc-range-slider-basic.html">Basic Range Slider</a></li>-->
+<!--                            <li><a href="uc-range-slider-advance.html">Advance Range Slider</a></li>-->
+<!--                            <li><a href="uc-nestable.html">Nestable</a></li>-->
+<!--                            <li><a href="uc-portlets.html">Portlets</a></li>-->
+<!--                            <li><a href="uc-rating-bar-rating.html">Bar Rating</a></li>-->
+<!--                            <li><a href="uc-rating-jRate.html">jRate</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li><a class="sidebar-sub-toggle"><i class="ti-layout-grid4-alt"></i> Table <span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="table-basic.html">Basic</a></li>-->
+<!--                            <li><a href="table-data.html">Datatable</a></li>-->
+<!--                            <li><a href="table-export.html">Datatable Export</a></li>-->
+<!--                            <li><a href="table-row-select.html">Datatable Row Select</a></li>-->
+<!--                            <li><a href="table-jsgrid.html">Editable </a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li><a class="sidebar-sub-toggle"><i class="ti-heart"></i> Icons <span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="font-themify.html">Themify</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li><a class="sidebar-sub-toggle"><i class="ti-map"></i> Maps <span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="gmaps.html">Basic</a></li>-->
+<!--                            <li><a href="vector-map.html">Vector Map</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li class="label">Form</li>-->
+<!--                    <li><a href="form-basic.html"><i class="ti-view-list-alt"></i> Basic Form </a></li>-->
+<!--                    <li class="label">Miscellaneous</li>-->
+<!--                    <li><a class="sidebar-sub-toggle"><i class="ti-files"></i> Invoice <span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="invoice.html">Basic</a></li>-->
+<!--                            <li><a href="invoice-editable.html">Editable</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li><a class="sidebar-sub-toggle"><i class="ti-target"></i> Pages <span class="sidebar-collapse-icon ti-angle-down"></span></a>-->
+<!--                        <ul>-->
+<!--                            <li><a href="page-login.html">Login</a></li>-->
+<!--                            <li><a href="page-register.html">Register</a></li>-->
+<!--                            <li><a href="page-reset-password.html">Forgot password</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li><a href="../documentation/index.html"><i class="ti-file"></i> Documentation</a></li>-->
+
+                </ul>
+            </div>
+        </div>
     </div>
-    <ul class="nav">
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'index' %}">Active Listing</a>
-        </li>
-        {% if user.is_authenticated %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'create_listing' %}" id="link_create">Create Listing</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'my_listing' %}" id="link_mine">My Listing</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'watch_list' %}" id="link_watch">Watchlist</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'winning_listing' %}" id="link_winning">Winninglist</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'categories' %}" id="link_categories">Categories</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}" id="link_out">Log Out</a>
-        </li>
-        {% else %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'login' %}">Log In</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'register' %}">Register</a>
-        </li>
-        {% endif %}
-    </ul>
-    <hr>
-        <a class="nav-link" href="{% url 'index' %}">Home</a>
-    {% block body %}
-    {% endblock %}
+    <!-- /# sidebar -->
+
+    <div class="header">
+        <div class="pull-left">
+
+            <div class="hamburger sidebar-toggle" style="left:10px;">
+                <span class="line"></span>
+                <span class="line"></span>
+                <span class="line"></span>
+            </div>
+            <div class="logo m-l-34" ><a href="{% url 'index' %}"><img src="../static/assets/images/wingman-red-light.png" alt="Wingman" width="80"/></a></div>
+        </div>
+        <div class="pull-right p-r-15">
+            <ul>
+                <li class="header-icon dib m-t-7"><a href="#search"><i class="ti-search"></i></a></li>
+                <li class="header-icon dib m-t-7"><i class="ti-bell"></i>
+                    <div class="drop-down">
+                        <div class="dropdown-content-heading" style="background-color:lightgrey;">
+                            <span class="text-left">Developing...</span>
+                        </div>
+<!--                        <div class="dropdown-content-body">-->
+<!--                            <ul>-->
+<!--                                <li>-->
+<!--                                    <a href="#">-->
+<!--                                        <img class="pull-left m-r-10 avatar-img" src="../static/assets/images/avatar/3.jpg" alt="" />-->
+<!--                                        <div class="notification-content">-->
+<!--                                            <small class="notification-timestamp pull-right">02:34 PM</small>-->
+<!--                                            <div class="notification-heading">Mr.  Ajay</div>-->
+<!--                                            <div class="notification-text">5 members joined today </div>-->
+<!--                                        </div>-->
+<!--                                    </a>-->
+<!--                                </li>-->
+<!--                                <li>-->
+<!--                                    <a href="#">-->
+<!--                                        <img class="pull-left m-r-10 avatar-img" src="../static/assets/images/avatar/3.jpg" alt="" />-->
+<!--                                        <div class="notification-content">-->
+<!--                                            <small class="notification-timestamp pull-right">02:34 PM</small>-->
+<!--                                            <div class="notification-heading">Mr.  Ajay</div>-->
+<!--                                            <div class="notification-text">likes a photo of you</div>-->
+<!--                                        </div>-->
+<!--                                    </a>-->
+<!--                                </li>-->
+<!--                                <li>-->
+<!--                                    <a href="#">-->
+<!--                                        <img class="pull-left m-r-10 avatar-img" src="../static/assets/images/avatar/3.jpg" alt="" />-->
+<!--                                        <div class="notification-content">-->
+<!--                                            <small class="notification-timestamp pull-right">02:34 PM</small>-->
+<!--                                            <div class="notification-heading">Mr.  Ajay</div>-->
+<!--                                            <div class="notification-text">Hi Teddy, Just wanted to let you ...</div>-->
+<!--                                        </div>-->
+<!--                                    </a>-->
+<!--                                </li>-->
+<!--                                <li>-->
+<!--                                    <a href="#">-->
+<!--                                        <img class="pull-left m-r-10 avatar-img" src="../static/assets/images/avatar/3.jpg" alt="" />-->
+<!--                                        <div class="notification-content">-->
+<!--                                            <small class="notification-timestamp pull-right">02:34 PM</small>-->
+<!--                                            <div class="notification-heading">Mr.  Ajay</div>-->
+<!--                                            <div class="notification-text">Hi Teddy, Just wanted to let you ...</div>-->
+<!--                                        </div>-->
+<!--                                    </a>-->
+<!--                                </li>-->
+<!--                                <li class="text-center">-->
+<!--                                    <a href="#" class="more-link">See All</a>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+                    </div>
+                </li>
+                <li class="header-icon dib m-t-7"><i class="ti-email"></i>
+                    <div class="drop-down">
+                    <div class="dropdown-content-heading" style="background-color:lightgrey;">
+                            <span class="text-left">Developing...</span>
+                            <a href="email.html"></a>
+                        </div>
+                        <div class="dropdown-content-body">
+<!--                            <ul>-->
+<!--                                <li class="notification-unread">-->
+<!--                                    <a href="#">-->
+<!--                                        <img class="pull-left m-r-10 avatar-img" src="assets/images/avatar/1.jpg" alt="" />-->
+<!--                                        <div class="notification-content">-->
+<!--                                            <small class="notification-timestamp pull-right">02:34 PM</small>-->
+<!--                                            <div class="notification-heading">Mr.  Ajay</div>-->
+<!--                                            <div class="notification-text">Hi Teddy, Just wanted to let you ...</div>-->
+<!--                                        </div>-->
+<!--                                    </a>-->
+<!--                                </li>-->
+<!--                                <li class="notification-unread">-->
+<!--                                    <a href="#">-->
+<!--                                        <img class="pull-left m-r-10 avatar-img" src="assets/images/avatar/2.jpg" alt="" />-->
+<!--                                        <div class="notification-content">-->
+<!--                                            <small class="notification-timestamp pull-right">02:34 PM</small>-->
+<!--                                            <div class="notification-heading">Mr.  Ajay</div>-->
+<!--                                            <div class="notification-text">Hi Teddy, Just wanted to let you ...</div>-->
+<!--                                        </div>-->
+<!--                                    </a>-->
+<!--                                </li>-->
+<!--                                <li>-->
+<!--                                    <a href="#">-->
+<!--                                        <img class="pull-left m-r-10 avatar-img" src="assets/images/avatar/3.jpg" alt="" />-->
+<!--                                        <div class="notification-content">-->
+<!--                                            <small class="notification-timestamp pull-right">02:34 PM</small>-->
+<!--                                            <div class="notification-heading">Mr.  Ajay</div>-->
+<!--                                            <div class="notification-text">Hi Teddy, Just wanted to let you ...</div>-->
+<!--                                        </div>-->
+<!--                                    </a>-->
+<!--                                </li>-->
+<!--                                <li>-->
+<!--                                    <a href="#">-->
+<!--                                        <img class="pull-left m-r-10 avatar-img" src="assets/images/avatar/2.jpg" alt="" />-->
+<!--                                        <div class="notification-content">-->
+<!--                                            <small class="notification-timestamp pull-right">02:34 PM</small>-->
+<!--                                            <div class="notification-heading">Mr.  Ajay</div>-->
+<!--                                            <div class="notification-text">Hi Teddy, Just wanted to let you ...</div>-->
+<!--                                        </div>-->
+<!--                                    </a>-->
+<!--                                </li>-->
+<!--                                <li class="text-center">-->
+<!--                                    <a href="#" class="more-link">See All</a>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+                        </div>
+                    </div>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="header-icon dib m-t-7"><img class="avatar-img" src="media/{{user.avatar}}" alt="" /> <span class="user-avatar"> {{user.username}} <i class="ti-angle-down f-s-10"></i></span>
+                    <div class="drop-down dropdown-profile">
+                        <div class="dropdown-content-heading">
+                            <span class="text-left">己所不欲，勿施于人。</span>
+                            <p class="trial-day">Confucius</p>
+                        </div>
+                        <div class="dropdown-content-body">
+                            <ul>
+                                <li><a href="{% url 'personal' %}"><i class="ti-user"></i> <span>Profile</span></a></li>
+                                <li style="background-color:lightgrey;"><a href="#"><i class="ti-control-pause"></i> <span>(Developing...)</span></a></li>
+                                <li style="background-color:lightgrey;"><a href="#"><i class="ti-control-pause"></i> <span>(Developing...)</span></a></li>
+                                <li style="background-color:lightgrey;"><a href="#"><i class="ti-control-pause"></i> <span>(Developing...)</span></a></li>
+                                <li style="background-color:lightgrey;"><a href="#"><i class="ti-control-pause"></i> <span>(Developing...)</span></a></li>
+                                <li><a href="#"><i class="ti-settings"></i> <span>Setting</span></a></li>
+                                <li><a href="#"><i class="ti-help-alt"></i> <span>Help</span></a></li>
+<!--                                <li><a href="#"><i class="ti-lock"></i> <span>Lock Screen</span></a></li>-->
+                                <li><a href="{% url 'logout' %}"><i class="ti-power-off"></i> <span>Logout</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                {% else %}
+                    <li class="header-icon dib">
+    <!--                用js实现网页的跳转-->
+                        <a type="button" class="btn btn-outline-light me-2"  href="{% url 'login' %}">Login in</a>
+                        <a type="button" class="btn btn-warning" href="{% url 'register' %}">Sign-up</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-8 p-r-0 title-margin-right">
+                        <div class="page-header">
+                            <div class="page-title">
+                                    <h1>{{ title }}</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /# column -->
+                    <div class="col-lg-4 p-l-0 title-margin-left">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <ol class="breadcrumb text-right">
+                                    <li><a href="{% url 'sportsindex' %}">Wingman</a></li>
+                                    <li class="active">Sports System</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /# column -->
+                </div>
+                <!-- /# row -->
+                <div id="main-content">
+
+                    {% block sports_summary %}
+                    {% endblock %}
+                    <div class="row">
+                        {% block basketball %}
+                        {% endblock %}
+                        {% block badminton %}
+                        {% endblock %}
+                    </div>
+                    <div class="row">
+                        {% block table_tennis %}
+                        {% endblock %}
+                        {% block billiard %}
+                        {% endblock %}
+                    </div>
+
+                    <!-- /# row -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>This dashboard was generated on <span id="date-time"></span> <a href="#" class="page-refresh">Refresh Dashboard</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    <div id="search">
+        <button type="button" class="close">×</button>
+        <form>
+            <input type="search" value="" placeholder="type keyword(s) here" />
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+
+
+
+    <script src="../../static/assets/js/lib/jquery.min.js"></script>
+    <!-- jquery vendor -->
+    <script src="../../static/assets/js/lib/jquery.nanoscroller.min.js"></script>
+    <!-- nano scroller -->
+    <script src="../../static/assets/js/lib/menubar/sidebar.js"></script>
+    <script src="../../static/assets/js/lib/preloader/pace.min.js"></script>
+    <!-- sidebar -->
+    <script src="../../static/assets/js/lib/bootstrap.min.js"></script>
+    <!-- bootstrap -->
+    <script src="../../static/assets/js/lib/weather/jquery.simpleWeather.min.js"></script>
+    <script src="../../static/assets/js/lib/weather/weather-init.js"></script>
+    <script src="../../static/assets/js/lib/circle-progress/circle-progress.min.js"></script>
+    <script src="../../static/assets/js/lib/circle-progress/circle-progress-init.js"></script>
+    <script src="../../static/assets/js/lib/chartist/chartist.min.js"></script>
+    <script src="../../static/assets/js/lib/chartist/chartist-init.js"></script>
+    <script src="../../static/assets/js/lib/sparklinechart/jquery.sparkline.min.js"></script>
+    <script src="../../static/assets/js/lib/sparklinechart/sparkline.init.js"></script>
+    <script src="../../static/assets/js/lib/owl-carousel/owl.carousel.min.js"></script>
+    <script src="../../static/assets/js/lib/owl-carousel/owl.carousel-init.js"></script>
+    <script src="../../static/assets/js/scripts.js"></script>
+    <script src="../../static/assets/js/my_script.js"></script>
 </body>
+
 </html>
+
+
+
+<!--{% load static %}-->
+
+<!--<!DOCTYPE html>-->
+<!--<meta charset="utf-8">-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <title>University DailyLife Wingman - Gym system</title>-->
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">-->
+<!--    <link href="../../static/assets/css/my_style.css" rel="stylesheet">-->
+
+<!--    {% block script %}-->
+<!--    {% endblock %}-->
+
+<!--</head>-->
+<!--<body>-->
+<!--    <h1>University DailyLife Wingman - Gym system</h1>-->
+<!--    <div>-->
+<!--        {% if user.is_authenticated %}-->
+<!--        Signed in as <strong>{{ user.username }}</strong>.-->
+<!--        {% else %}-->
+<!--        Not signed in.-->
+<!--        {% endif %}-->
+<!--    </div>-->
+<!--    <ul class="nav">-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="{% url 'sportsindex' %}">Active Listing</a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="{% url 'chats' %}">Chatting Room</a>-->
+<!--        </li>-->
+
+<!--        {% if user.is_authenticated %}-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="{% url 'logout' %}" id="link_out">Log Out</a>-->
+<!--        </li>-->
+<!--        {% else %}-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="{% url 'login' %}">Log In</a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="{% url 'register' %}">Register</a>-->
+<!--        </li>-->
+<!--        {% endif %}-->
+<!--    </ul>-->
+<!--    <hr>-->
+<!--        <a class="nav-link" href="{% url 'index' %}">Home</a>-->
+<!--    {% block body %}-->
+<!--    {% endblock %}-->
+<!--</body>-->
+<!--</html>-->

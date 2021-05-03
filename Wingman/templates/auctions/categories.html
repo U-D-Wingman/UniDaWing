@@ -1,15 +1,23 @@
-{% extends "auctions/layout.html" %}
+{% extends "auctions/index.html" %}
 {% load static %}
 
-{% block body %}
-<h2>Categories</h2>
+{% block categories %}
+<div class="row">
+<div class="col-lg-12">
 
-<ul class="list-group">
-    {% for category in categories %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-           <a class="alert-link" href="{% url 'listed_article_by_category' category.pk %}"> {{category.name}}</a>
-        </li>
-    {% endfor %}
-</ul>
+
+<div class="col-lg-12">
+    <ul class="list-group">
+    <h2>Categories</h2>
+        {% for category in categories %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+               <a class="alert-link" href="{% url 'listed_article_by_category' category.pk %}"> {{category.name}}</a>
+            </li>
+        {% endfor %}
+
+    </ul>
+        </div>
+</div>
+</div>
 
 {% endblock %}
